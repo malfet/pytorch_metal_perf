@@ -1,0 +1,24 @@
+{
+  "id": "inductor-layout-channels-last",
+  "pattern": [
+    "F"
+  ],
+  "title": "Inductor layout optimization forced channels_last and made compiled conv training 4.5-9x slower than eager",
+  "issue": 192551,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": null,
+  "fixed_in": null,
+  "status": "open",
+  "ops": [
+    "conv2d",
+    "batch_norm"
+  ],
+  "dtypes": [
+    "bfloat16"
+  ],
+  "detect": [
+    "conv/*/channels_last/*/*/compute"
+  ],
+  "notes": "TORCHINDUCTOR_LAYOUT_OPTIMIZATION=0 turns compile into a win at every shape tried. Out of scope for v1, which is eager-only; needs the compile lane."
+}

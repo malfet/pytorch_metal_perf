@@ -1,0 +1,26 @@
+{
+  "id": "linear-bias-batch-65536",
+  "pattern": [
+    "C",
+    "E"
+  ],
+  "title": "F.linear with bias corrupted rows once a batch dim exceeded 2^16",
+  "issue": null,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 189496,
+  "fixed_in": "2.14.0",
+  "status": "fixed",
+  "ops": [
+    "linear"
+  ],
+  "dtypes": [
+    "float32",
+    "float16",
+    "bfloat16"
+  ],
+  "detect": [
+    "matmul/linear_bias/batch65537/*/*/compute"
+  ],
+  "notes": "Correctness, not performance -- included because the fix sits on the same dispatch threshold as the seq=1 decode cliff and any change to that heuristic must be measured on both sides of 2^16. Sibling of #195147 (pad corrupting rank>4 with >=2^16 inner elements, trunk only as of 2026-09-18)."
+}

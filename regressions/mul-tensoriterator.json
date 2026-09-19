@@ -1,0 +1,27 @@
+{
+  "id": "mul-tensoriterator",
+  "pattern": [
+    "A",
+    "B"
+  ],
+  "title": "mul migrated to TensorIterator slowed real applications 15-20%",
+  "issue": 168964,
+  "caused_by": 152515,
+  "caused_in": "2.8.0",
+  "fixed_by": null,
+  "fixed_in": null,
+  "status": "open",
+  "ops": [
+    "mul"
+  ],
+  "dtypes": [
+    "float16",
+    "bfloat16",
+    "float32"
+  ],
+  "detect": [
+    "binary/mul/dense-dense/float16/*/launch",
+    "binary/mul/dense-dense/float16/*/memory"
+  ],
+  "notes": "Reporter bisected a whole-application 15-20% MPS slowdown from 2.7.1->2.9.0 to this PR and restored performance by simply un-registering mul_stub, i.e. falling back to MPSGraph. Their diagnosis: the Metal kernel widens half inputs to fp32 for accuracy they did not need. No opt-out exists. This is why fp16/bf16 lanes are never averaged with fp32."
+}

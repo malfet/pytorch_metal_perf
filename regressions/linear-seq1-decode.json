@@ -1,0 +1,57 @@
+{
+  "id": "linear-seq1-decode",
+  "pattern": [
+    "E"
+  ],
+  "title": "F.linear on [B,1,K] (seq=1 decode) up to 8.5x slower than the identical 2D op",
+  "issue": 189847,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 189855,
+  "fixed_in": "2.14.0",
+  "status": "fixed",
+  "ops": [
+    "linear"
+  ],
+  "dtypes": [
+    "bfloat16",
+    "float16"
+  ],
+  "detect": [
+    "matmul/linear_decode_3d/B1/bfloat16/*/memory",
+    "matmul/linear_decode_3d/B8/bfloat16/*/memory"
+  ],
+  "notes": "Cost ramped ~linearly with B then snapped back to GEMM once B crossed ~16; fp32 unaffected. Directly throttles on-device LLM token generation. The 2D form of each shape is measured alongside as the reference the 3D form should match. Reproduced end to end: 7.1x at B=8 on 2.9.0/2.11.0/2.13.0, 1.02x on 2.14.0, exactly where #189855 was verified to land. Latency mode understates it at 4.3x because both paths pay the same sync round trip, so throughput is the mode that matches the 8.5x in the report.",
+  "reproduced": {
+    "machine": "Apple M4 Pro, macOS 26.6.2 (25G83)",
+    "metric": "F.linear([B,1,4096]) / F.linear([B,4096]), bfloat16, throughput mode",
+    "by_version": {
+      "2.9.0": {
+        "B1": 1.0,
+        "B8": 7.06,
+        "B17": 1.02
+      },
+      "2.11.0": {
+        "B1": 0.99,
+        "B8": 7.29,
+        "B17": 1.01
+      },
+      "2.13.0": {
+        "B1": 1.0,
+        "B8": 7.18,
+        "B17": 1.05
+      },
+      "2.14.0": {
+        "B1": 1.01,
+        "B8": 1.02,
+        "B17": 1.01
+      },
+      "2.15.0a0+git9a7fba2": {
+        "B1": 0.96,
+        "B8": 1.01,
+        "B17": 1.02
+      }
+    },
+    "date": "2026-09-18"
+  }
+}

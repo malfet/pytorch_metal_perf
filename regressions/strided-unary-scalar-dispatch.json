@@ -1,0 +1,29 @@
+{
+  "id": "strided-unary-scalar-dispatch",
+  "pattern": [
+    "D"
+  ],
+  "title": "Strided unary kernels ran a scalar gather instead of a vectorized path",
+  "issue": null,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 185291,
+  "fixed_in": "2.13.0",
+  "status": "fixed",
+  "ops": [
+    "neg",
+    "sqrt",
+    "exp",
+    "erf"
+  ],
+  "dtypes": [
+    "float32",
+    "float16",
+    "bfloat16"
+  ],
+  "detect": [
+    "unary/*/inner_slice/*/*/memory",
+    "unary/*/transposed/*/*/memory"
+  ],
+  "notes": "Followed up by #188483, which vectorized elementwise ops on inner-contiguous (sliced/strided) views in 2.14.0. The dense:strided ratio in the unary group is the direct readout."
+}

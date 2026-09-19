@@ -1,0 +1,27 @@
+{
+  "id": "gemv-dedicated-kernels",
+  "pattern": [
+    "E"
+  ],
+  "title": "Matrix-vector products had no dedicated kernel and ran as degenerate GEMM",
+  "issue": null,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 186927,
+  "fixed_in": "2.14.0",
+  "status": "fixed",
+  "ops": [
+    "mv",
+    "linear"
+  ],
+  "dtypes": [
+    "float32",
+    "float16",
+    "bfloat16"
+  ],
+  "detect": [
+    "matmul/mv/4096x4096/*/*/memory",
+    "matmul/mv/11008x4096/*/*/memory"
+  ],
+  "notes": "Purely bandwidth-bound; the useful readout is achieved GB/s against measured device peak, not ms."
+}

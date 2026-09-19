@@ -1,0 +1,30 @@
+{
+  "id": "noncontig-reductions",
+  "pattern": [
+    "D"
+  ],
+  "title": "Reductions on non-contiguous inputs took the slow generic path",
+  "issue": null,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 187313,
+  "fixed_in": "2.14.0",
+  "status": "fixed",
+  "ops": [
+    "sum",
+    "max",
+    "argmax",
+    "amin"
+  ],
+  "dtypes": [
+    "float32",
+    "float16",
+    "bfloat16",
+    "int64"
+  ],
+  "detect": [
+    "reduction/*/transposed/*/*/memory",
+    "reduction/*/inner_slice/*/*/memory"
+  ],
+  "notes": "Part of the largest cluster of MPS reduction work in the window: #191097 inner-dim, #191098 strided/batched outer + small-dim + narrow, #191099 argmax/argmin strided and split-K, #191100 min/max off MPSGraph, #191101 skip input up-casts + vec4 full reductions, #191104 int64 min/max over partial simdgroups. All first appear in 2.14.0, so the 2.13->2.14 reduction geomean is the headline validation of this suite."
+}

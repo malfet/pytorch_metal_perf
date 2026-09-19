@@ -1,0 +1,26 @@
+{
+  "id": "d2h-nondense-gather",
+  "pattern": [
+    "D",
+    "G"
+  ],
+  "title": "MPS-to-CPU copies of non-dense equal-strided views fell back to an elementwise path",
+  "issue": null,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 189966,
+  "fixed_in": "2.14.0",
+  "status": "fixed",
+  "ops": [
+    "copy_",
+    "to"
+  ],
+  "dtypes": [
+    "float32",
+    "float16"
+  ],
+  "detect": [
+    "copy/d2h/outer_slice/*/*/memory"
+  ],
+  "notes": "The outer_slice layout variant exists specifically for this shape of bug: rows contiguous, tensor non-dense. Needs the copy group (not yet implemented) to be detectable."
+}

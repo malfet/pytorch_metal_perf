@@ -1,0 +1,25 @@
+{
+  "id": "im2col-64bit-index",
+  "pattern": [
+    "C"
+  ],
+  "title": "Im2Col lost 12-41% where 32-bit indexing would have sufficed",
+  "issue": 185858,
+  "caused_by": null,
+  "caused_in": null,
+  "fixed_by": 185860,
+  "fixed_in": "2.13.0",
+  "status": "fixed",
+  "ops": [
+    "conv2d",
+    "unfold"
+  ],
+  "dtypes": [
+    "float32",
+    "float16"
+  ],
+  "detect": [
+    "conv/im2col/*/float32/*/compute"
+  ],
+  "notes": "64-bit position/stride math added to avoid the overflow corruption fixed for Col2Im in #185664 put 64-bit multiplies in the hot path. Fix templatizes on index width. Sibling of #185664. Needs the conv group (not yet implemented) to be detectable."
+}

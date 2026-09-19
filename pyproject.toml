@@ -1,0 +1,23 @@
+[project]
+name = "pytorch-metal-perf"
+version = "0.1.0"
+description = "MPS operator benchmarks across torch versions, shapes, layouts and dtypes"
+requires-python = ">=3.10"
+# torch is deliberately not a dependency: the point of this package is to be
+# imported by many different torch installs via PYTHONPATH. tools/analyze.py
+# imports nothing but the stdlib.
+dependencies = []
+
+[project.optional-dependencies]
+run = ["torch", "numpy"]
+
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["pmp*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
