@@ -29,6 +29,26 @@ None of these would have been caught by benchmarking one shape, one layout and
 one dtype, and none of them would have shown up in a mean. So this suite sweeps
 the axes those bugs actually lived on, and reports the tail next to the average.
 
+## What the first sweep found
+
+[FINDINGS.md](FINDINGS.md) has the detail; [REPORT.md](REPORT.md) is the
+generated output. Three regressions, each re-confirmed with a standalone script
+independent of the harness:
+
+1. **`torch.mv` on fp16 was 4.3x slower in 2.13.0, and only in 2.13.0.** fp32
+   unaffected. Cause is self-documented by a `TORCH_WARN_ONCE` in
+   `LinearAlgebra.mm`: the LORADOWN padding-overflow guard for #178056 routes
+   every fp16 GEMV to a metal fallback, which in 2.13.0 was slower than the path
+   it replaced. #186927's GEMV kernels made the fallback fast again in 2.14.0.
+2. **`max` over a strided view regressed 2.0x at 2.14.0 and is still there on
+   trunk** — in the same release where the reduction group's geomean doubled to
+   1.99x. The dense path improved; only the non-dense path regressed. Strided
+   `max` now costs 3.9x dense over the same element count.
+3. **`pow` on strided views regressed 1.6x on trunk vs 2.14.0**, unreleased.
+
+Finding 2 is the thesis of this repo in a single release: geomean 1.99x, worst
+cell 0.49x.
+
 ### Failure patterns
 
 Each is a sweep axis, and `regressions/` pins each to the PRs involved.

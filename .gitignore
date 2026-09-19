@@ -2,6 +2,7 @@
 __pycache__/
 *.pyc
 .venv/
-reports/
+
 *.egg-info/
 .DS_Store
+reports/*.json
