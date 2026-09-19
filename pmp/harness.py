@@ -18,6 +18,7 @@ pipeline, so its throughput time never drops below its latency time.
 
 from __future__ import annotations
 
+import math
 import statistics
 import time
 from dataclasses import asdict, dataclass
@@ -125,8 +126,15 @@ def time_throughput(
     """
     per_call = _calibrate(fn, warmup)
 
-    chunk = INFLIGHT_BUDGET_BYTES // out_bytes if out_bytes > 0 else 1024
-    chunk = max(min_iters, min(chunk, 1024))
+    # Two independent caps on how many calls may be in flight at once:
+    #   memory -- how much output the allocator would have to hold unsynced
+    #   time   -- how many calls it actually takes to reach the target duration
+    # The time cap matters as much as the memory one. A reduction outputs a
+    # scalar, so the memory cap alone permits 1024 in flight, and a half-
+    # millisecond reduction then spends 3.5s per case reaching a 30ms target.
+    by_memory = INFLIGHT_BUDGET_BYTES // out_bytes if out_bytes > 0 else 1024
+    by_time = math.ceil(target_s / per_call)
+    chunk = max(min_iters, min(by_memory, by_time, 1024))
 
     iters = max(chunk, int(target_s / per_call))
     iters = (iters // chunk) * chunk or chunk
