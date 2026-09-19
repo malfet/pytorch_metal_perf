@@ -70,6 +70,44 @@ as healthy; a latency-only suite blames the kernel.
 
 Neither mode is "the real number." The pair is the measurement.
 
+## Calibration: where the floor is
+
+The `overhead` group times ops that do essentially no work, which is what makes
+the `launch`-bound lane interpretable at all. M4 Pro, macOS 26.6.2, fp32:
+
+| probe | latency | pipelined |
+|---|---:|---:|
+| `view` (no output, no GPU work) | 0.6 µs | 0.4 µs |
+| `empty_like` | 0.6 µs | 0.4 µs |
+| `neg` on 1 element | 171 µs | 11.9 µs |
+| `add` on 1 element | 176 µs | 12.1 µs |
+| `neg` on 32×32 | 182 µs | 15.8 µs |
+| `mm` 1×1 | 213 µs | 22.4 µs |
+| `sum` of 1 element | 255 µs | 27.1 µs |
+
+Three things follow, and they change how every other number in the suite should
+be read:
+
+1. **Python is not the bottleneck.** `view` costs 0.6 µs, so interpreter and
+   dispatcher overhead is ~0.5% of even the cheapest real op. Benchmarking eager
+   PyTorch from Python is not distorting anything here.
+
+2. **The sync round trip is ~170 µs.** In latency mode, any op cheaper than that
+   is measuring the round trip, not itself. A 256×256 elementwise op moves
+   512 KiB — about 2.6 µs of DRAM traffic at the measured peak — so the entire
+   `launch` lane sits far below the floor in latency mode. Version-to-version
+   differences there are single-digit percentages of a constant, and should be
+   read as such.
+
+3. **The pipelined encoder floor is ~12 µs.** So the `launch` lane is
+   dispatch-dominated in *both* modes, which is exactly what it is for. That
+   makes it the right lane to watch for pattern A: an op that stops being one
+   cached MPSGraph and becomes N individually-encoded Metal kernels pays this
+   12 µs per encoder, and nothing about kernel quality can recover it.
+
+The floor is also worth tracking across versions in its own right — if `neg` on
+one element gets slower between releases, that is the dispatcher, not any op.
+
 ## What the same run said about the harness itself
 
 Two methodology bugs, both found by running it rather than by reading it:

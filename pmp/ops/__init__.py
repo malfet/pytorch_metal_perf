@@ -14,6 +14,7 @@ from ..case import Case, SweepConfig
 
 #: Registration order is report order.
 GROUP_NAMES = (
+    "overhead",
     "unary",
     "binary",
     "reduction",

@@ -147,7 +147,14 @@ row.
 
 ## Coverage
 
-Implemented: `unary`, `binary`, `reduction`, `normalization`, `matmul`.
+Implemented: `overhead`, `unary`, `binary`, `reduction`, `normalization`,
+`matmul`.
+
+`overhead` is the calibration group — ops that do essentially no work, so the
+other groups' `launch`-bound numbers can be read against a known floor. On an
+M4 Pro that floor is ~170 µs for a sync round trip and ~12 µs per pipelined
+encoder, while pure Python dispatch is 0.6 µs. Anything cheaper than the floor
+is measuring the floor. See [MEASUREMENTS.md](MEASUREMENTS.md).
 
 Not yet: scan/cumulative, indexing and gather/scatter, copy/cast, attention,
 sort/topk, distributions, conv. Three entries in `regressions/`
