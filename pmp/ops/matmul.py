@@ -156,7 +156,78 @@ def _gemv_cases(cfg: SweepConfig) -> Iterator[Case]:
             )
 
 
+#: (label, tokens, K, N): nn.Linear as LLMs call it, [1, tokens, K] x [N, K]^T.
+#: From WORKLOADS.md; the weight is what dominates decode traffic.
+MODEL_LINEAR_SHAPES = (
+    ("llama1b-up-prefill", 512, 2048, 8192),
+    ("llama1b-up-decode", 1, 2048, 8192),
+    ("llama1b-lmhead-decode", 1, 2048, 128256),
+    ("gemma2-up-prefill", 512, 2304, 9216),
+    ("qwen3-qkv-decode", 1, 1024, 3072),
+)
+QUICK_MODEL_LINEAR = ("llama1b-up-prefill", "llama1b-up-decode", "llama1b-lmhead-decode")
+
+#: (label, batch*heads, L, D): eager attention scores q @ k^T, as the math SDPA
+#: path and training backward run it (Llama-3.2-1B train, seq 256).
+BMM_SHAPES = (("llama1b-train-scores", 32, 256, 64),)
+
+
+def _model_linear_cases(cfg: SweepConfig) -> Iterator[Case]:
+    for label, tokens, k, n in MODEL_LINEAR_SHAPES:
+        if cfg.quick and label not in QUICK_MODEL_LINEAR:
+            continue
+        for dtype_name in cfg.dtypes:
+            if dtype_name not in _FLOAT:
+                continue
+            dtype = getattr(torch, dtype_name)
+            x = torch.empty(1, tokens, k, dtype=dtype, device="mps").uniform_(-1, 1)
+            w = torch.empty(n, k, dtype=dtype, device="mps").uniform_(-1, 1)
+            esize = w.element_size()
+            yield Case(
+                group="matmul",
+                op="linear_model",
+                variant=label,
+                dtype=dtype_name,
+                bound="memory" if tokens == 1 else "compute",
+                shape=(1, tokens, k, n),
+                fn=(lambda t=x, ww=w: F.linear(t, ww)),
+                bytes_moved=(tokens * k + n * k + tokens * n) * esize,
+                flops=2 * tokens * k * n,
+                out_bytes=tokens * n * esize,
+                modes=cfg.modes,
+                tags={"source": "WORKLOADS.md"},
+            )
+
+
+def _bmm_cases(cfg: SweepConfig) -> Iterator[Case]:
+    for label, bh, seq, d in BMM_SHAPES:
+        for dtype_name in cfg.dtypes:
+            if dtype_name not in _FLOAT:
+                continue
+            dtype = getattr(torch, dtype_name)
+            # q as models produce it ([B, L, H, D] viewed to heads), k^T as a view.
+            q = torch.empty(seq, bh, d, dtype=dtype, device="mps").uniform_(-1, 1).transpose(0, 1)
+            k = torch.empty(bh, seq, d, dtype=dtype, device="mps").uniform_(-1, 1)
+            esize = q.element_size()
+            yield Case(
+                group="matmul",
+                op="bmm",
+                variant=label,
+                dtype=dtype_name,
+                bound="compute",
+                shape=(bh, seq, d, seq),
+                fn=(lambda a=q, b=k: torch.bmm(a, b.transpose(1, 2))),
+                bytes_moved=(2 * bh * seq * d + bh * seq * seq) * esize,
+                flops=2 * bh * seq * seq * d,
+                out_bytes=bh * seq * seq * esize,
+                modes=cfg.modes,
+                tags={"source": "WORKLOADS.md"},
+            )
+
+
 def cases(cfg: SweepConfig) -> Iterator[Case]:
+    yield from _model_linear_cases(cfg)
+    yield from _bmm_cases(cfg)
     yield from _decode_cases(cfg)
     yield from _gemv_cases(cfg)
     yield from _gemm_cases(cfg)

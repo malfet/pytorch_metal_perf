@@ -49,7 +49,7 @@ def _rms_norm(x, weight):
     return (x * torch.rsqrt(var + 1e-6).to(x.dtype)) * weight
 
 
-def cases(cfg: SweepConfig) -> Iterator[Case]:
+def _row_cases(cfg: SweepConfig) -> Iterator[Case]:
     shapes = [s for s in SHAPES if not cfg.quick or s[0] in QUICK_SHAPES]
     for label, rows, width in shapes:
         for dtype_name in cfg.dtypes:
@@ -91,3 +91,65 @@ def cases(cfg: SweepConfig) -> Iterator[Case]:
                     modes=cfg.modes,
                     tags={"pattern": "B/D", "prs": [190492, 190055, 189617]},
                 )
+
+
+#: (label, N, C, H, W) for eval-mode batch_norm, from ResNet-50 / EfficientNet-B0.
+BN_SHAPES = (
+    ("resnet50-256@56", 8, 256, 56, 56),
+    ("effnet-96@112", 8, 96, 112, 112),
+)
+#: (label, N, C, H, W, groups) for group_norm, from the SD 1.5 UNet / VAE.
+GN_SHAPES = (
+    ("sd-unet-320@64", 2, 320, 64, 64, 32),
+    ("sd-vae-128@512", 1, 128, 512, 512, 32),
+)
+
+
+def _image_norm_cases(cfg: SweepConfig) -> Iterator[Case]:
+    """batch_norm (eval) and group_norm on 4D activations, dense and channels_last."""
+    specs = [("batch_norm", *s, None) for s in BN_SHAPES] + [("group_norm", *s) for s in GN_SHAPES]
+    for op_name, label, n, c, h, w, groups in specs:
+        if cfg.quick and label not in ("resnet50-256@56", "sd-unet-320@64"):
+            continue
+        for dtype_name in cfg.dtypes:
+            if dtype_name not in _FLOAT:
+                continue
+            dtype = getattr(torch, dtype_name)
+            for variant in ("dense", "channels_last"):
+                mf = torch.channels_last if variant == "channels_last" else torch.contiguous_format
+                x = torch.empty(n, c, h, w, dtype=dtype, device="mps").uniform_(-2, 2)
+                x = x.to(memory_format=mf)
+                wt = torch.empty(c, dtype=dtype, device="mps").uniform_(0.5, 1.5)
+                b = torch.zeros(c, dtype=dtype, device="mps")
+                if op_name == "batch_norm":
+                    rm = torch.zeros(c, dtype=dtype, device="mps")
+                    rv = torch.ones(c, dtype=dtype, device="mps")
+                    fn = (lambda t=x, rm=rm, rv=rv, ww=wt, bb=b:  # noqa: E731
+                          F.batch_norm(t, rm, rv, ww, bb, training=False))
+                else:
+                    fn = lambda t=x, g=groups, ww=wt, bb=b: F.group_norm(t, g, ww, bb)  # noqa: E731
+                try:
+                    fn()
+                except (RuntimeError, TypeError):
+                    continue
+                esize = x.element_size()
+                yield Case(
+                    group="normalization",
+                    op=op_name,
+                    variant=f"{label}/{variant}",
+                    dtype=dtype_name,
+                    bound="memory",
+                    shape=(n, c, h, w),
+                    fn=fn,
+                    bytes_moved=2 * x.numel() * esize,
+                    flops=x.numel() * (2 if op_name == "batch_norm" else 8),
+                    out_bytes=x.numel() * esize,
+                    modes=cfg.modes,
+                    tags={"pattern": "F" if variant == "channels_last" else "",
+                          "source": "WORKLOADS.md"},
+                )
+
+
+def cases(cfg: SweepConfig) -> Iterator[Case]:
+    yield from _row_cases(cfg)
+    yield from _image_norm_cases(cfg)

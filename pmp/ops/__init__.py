@@ -20,6 +20,10 @@ GROUP_NAMES = (
     "reduction",
     "normalization",
     "matmul",
+    "conv",
+    "attention",
+    "copy",
+    "optimizer",
 )
 
 

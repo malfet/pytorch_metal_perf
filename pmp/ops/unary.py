@@ -12,6 +12,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 
 import torch
+import torch.nn.functional as F
 
 from ..case import LAUNCH_SHAPE, MEMORY_SHAPE, Case, SweepConfig
 from ..layouts import CORE_VARIANTS, make
@@ -31,6 +32,12 @@ OPS = {
     "sigmoid": (torch.sigmoid, _FLOAT, 12),
     "tanh": (torch.tanh, _FLOAT, 15),
     "isnan": (torch.isnan, _FLOAT, 1),
+    # Activations, by traffic share in WORKLOADS.md: gelu (BERT/ViT/Gemma/
+    # phi-2), relu (ResNet), silu (Llama/Qwen/SD), hardswish (MobileNetV3).
+    "gelu": (F.gelu, _FLOAT, 20),
+    "silu": (F.silu, _FLOAT, 12),
+    "relu": (F.relu, _FLOAT, 1),
+    "hardswish": (F.hardswish, _FLOAT, 4),
 }
 
 QUICK_OPS = ("neg", "sqrt", "exp", "erf")
