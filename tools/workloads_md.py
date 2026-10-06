@@ -19,9 +19,10 @@ from collections import defaultdict
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-FAMILIES = ("llm", "encoder", "vision", "audio", "diffusion")
+FAMILIES = ("llm", "encoder", "vision", "audio", "diffusion", "video", "preprocessor")
 FAMILY_TITLE = {"llm": "LLMs", "encoder": "Encoder / small transformers", "vision": "Vision",
-                "audio": "Audio", "diffusion": "Diffusion"}
+                "audio": "Audio", "diffusion": "Diffusion (image)", "video": "Video diffusion",
+                "preprocessor": "ControlNet preprocessors"}
 
 CATEGORY_OPS = {
     "matmul": {"linear", "linear_backward", "mm", "addmm", "bmm", "baddbmm", "matmul", "mv", "addmv", "_addmm_activation"},

@@ -1,0 +1,1205 @@
+{
+ "model": "segformer-ade",
+ "family": "preprocessor",
+ "dtype": "float32",
+ "input": "3x512x512",
+ "note": "ComfyUI ControlNet preprocessor class",
+ "torch": "2.15.0a0+git119b177",
+ "phases": {
+  "forward": {
+   "calls": 151,
+   "wall_s": 0.01914841600228101,
+   "ops": [
+    {
+     "op": "cat",
+     "inputs": [
+      "f32[1,256,128,128]",
+      "f32[1,256,128,128]",
+      "f32[1,256,128,128]",
+      "f32[1,256,128,128]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "f32[1,1024,128,128]"
+     ],
+     "count": 1,
+     "bytes": 134217728,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,1024,128,128]",
+      "f32[256,1024,1,1]"
+     ],
+     "args": [
+      "[1,1]",
+      "[0,0]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,256,128,128]"
+     ],
+     "count": 1,
+     "bytes": 84934656,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,128,128,128]{cl}",
+      "f32[128,1,3,3]",
+      "f32[128]"
+     ],
+     "args": [
+      "[1,1]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "128"
+     ],
+     "outputs": [
+      "f32[1,128,128,128]"
+     ],
+     "count": 2,
+     "bytes": 33564672,
+     "tag": null
+    },
+    {
+     "op": "native_batch_norm",
+     "inputs": [
+      "f32[1,256,128,128]",
+      "f32[256]",
+      "f32[256]",
+      "f32[256]",
+      "f32[256]"
+     ],
+     "args": [
+      "False",
+      "0.1",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,256,128,128]",
+      "f32[0]",
+      "f32[0]"
+     ],
+     "count": 1,
+     "bytes": 33558528,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "f32[1,16384,128]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,16384,128]{T}"
+     ],
+     "count": 2,
+     "bytes": 33554432,
+     "tag": "pointwise"
+    },
+    {
+     "op": "upsample_bilinear2d",
+     "inputs": [
+      "f32[1,256,128,128]{cl}"
+     ],
+     "args": [
+      "[128,128]",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,256,128,128]"
+     ],
+     "count": 1,
+     "bytes": 33554432,
+     "tag": null
+    },
+    {
+     "op": "relu",
+     "inputs": [
+      "f32[1,256,128,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,128,128]"
+     ],
+     "count": 1,
+     "bytes": 33554432,
+     "tag": "pointwise"
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,256,128,128]",
+      "f32[150,256,1,1]",
+      "f32[150]"
+     ],
+     "args": [
+      "[1,1]",
+      "[0,0]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,150,128,128]"
+     ],
+     "count": 1,
+     "bytes": 26761816,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,16384,32]",
+      "f32[1,16384,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,16384,32]"
+     ],
+     "count": 4,
+     "bytes": 25165824,
+     "tag": "pointwise"
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,16384,32]",
+      "f32[32]",
+      "f32[32]"
+     ],
+     "args": [
+      "[32]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,16384,32]",
+      "f32[1,16384,1]",
+      "f32[1,16384,1]"
+     ],
+     "count": 5,
+     "bytes": 21628160,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,16384,32]",
+      "f32[128,32]",
+      "f32[128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,16384,128]"
+     ],
+     "count": 2,
+     "bytes": 21005312,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,16384,128]{T}",
+      "f32[32,128]",
+      "f32[32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,16384,32]"
+     ],
+     "count": 2,
+     "bytes": 21004544,
+     "tag": null
+    },
+    {
+     "op": "upsample_bilinear2d",
+     "inputs": [
+      "f32[1,256,64,64]{cl}"
+     ],
+     "args": [
+      "[128,128]",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,256,128,128]"
+     ],
+     "count": 1,
+     "bytes": 20971520,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,16384,32]{T}",
+      "f32[256,32]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,16384,256]"
+     ],
+     "count": 1,
+     "bytes": 18908160,
+     "tag": null
+    },
+    {
+     "op": "upsample_bilinear2d",
+     "inputs": [
+      "f32[1,256,32,32]{cl}"
+     ],
+     "args": [
+      "[128,128]",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,256,128,128]"
+     ],
+     "count": 1,
+     "bytes": 17825792,
+     "tag": null
+    },
+    {
+     "op": "upsample_bilinear2d",
+     "inputs": [
+      "f32[1,256,16,16]{cl}"
+     ],
+     "args": [
+      "[128,128]",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,256,128,128]"
+     ],
+     "count": 1,
+     "bytes": 17039360,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,256,64,64]{cl}",
+      "f32[256,1,3,3]",
+      "f32[256]"
+     ],
+     "args": [
+      "[1,1]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "256"
+     ],
+     "outputs": [
+      "f32[1,256,64,64]"
+     ],
+     "count": 2,
+     "bytes": 16797696,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,16384,32]",
+      "f32[32,32]",
+      "f32[32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,16384,32]"
+     ],
+     "count": 4,
+     "bytes": 16794112,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "f32[1,4096,256]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4096,256]{T}"
+     ],
+     "count": 2,
+     "bytes": 16777216,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,4096,64]",
+      "f32[1,4096,64]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4096,64]"
+     ],
+     "count": 4,
+     "bytes": 12582912,
+     "tag": "pointwise"
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,4096,64]",
+      "f32[64]",
+      "f32[64]"
+     ],
+     "args": [
+      "[64]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,4096,64]",
+      "f32[1,4096,1]",
+      "f32[1,4096,1]"
+     ],
+     "count": 5,
+     "bytes": 10652160,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,4096,64]",
+      "f32[256,64]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4096,256]"
+     ],
+     "count": 2,
+     "bytes": 10618880,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,4096,256]{T}",
+      "f32[64,256]",
+      "f32[64]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4096,64]"
+     ],
+     "count": 2,
+     "bytes": 10617344,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,640,32,32]{cl}",
+      "f32[640,1,3,3]",
+      "f32[640]"
+     ],
+     "args": [
+      "[1,1]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "640"
+     ],
+     "outputs": [
+      "f32[1,640,32,32]"
+     ],
+     "count": 2,
+     "bytes": 10536960,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "f32[1,1024,640]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1024,640]{T}"
+     ],
+     "count": 2,
+     "bytes": 10485760,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_scaled_dot_product_attention_math_for_mps",
+     "inputs": [
+      "f32[1,1,16384,32]",
+      "f32[1,1,256,32]",
+      "f32[1,1,256,32]"
+     ],
+     "args": [
+      "scale=0.1767766952966369"
+     ],
+     "outputs": [
+      "f32[1,1,16384,32]"
+     ],
+     "count": 2,
+     "bytes": 8519680,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,4096,64]",
+      "f32[64,64]",
+      "f32[64]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4096,64]"
+     ],
+     "count": 4,
+     "bytes": 8455168,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,1024,160]",
+      "f32[1,1024,160]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1024,160]"
+     ],
+     "count": 4,
+     "bytes": 7864320,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,1024,160]",
+      "f32[640,160]",
+      "f32[640]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1024,640]"
+     ],
+     "count": 2,
+     "bytes": 7377920,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,1024,640]{T}",
+      "f32[160,640]",
+      "f32[160]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1024,160]"
+     ],
+     "count": 2,
+     "bytes": 7374080,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,1024,160]",
+      "f32[160]",
+      "f32[160]"
+     ],
+     "args": [
+      "[160]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,1024,160]",
+      "f32[1,1024,1]",
+      "f32[1,1024,1]"
+     ],
+     "count": 5,
+     "bytes": 6600960,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,256]",
+      "f32[256,256]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,256]"
+     ],
+     "count": 8,
+     "bytes": 6299648,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,1024,160]",
+      "f32[160,160]",
+      "f32[160]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1024,160]"
+     ],
+     "count": 4,
+     "bytes": 5655040,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,4096,64]{T}",
+      "f32[256,64]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4096,256]"
+     ],
+     "count": 1,
+     "bytes": 5309440,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,3,512,512]",
+      "f32[32,3,7,7]",
+      "f32[32]"
+     ],
+     "args": [
+      "[4,4]",
+      "[3,3]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,32,128,128]"
+     ],
+     "count": 1,
+     "bytes": 5261824,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,32,128,128]{cl}",
+      "f32[32,32,8,8]",
+      "f32[32]"
+     ],
+     "args": [
+      "[8,8]",
+      "[0,0]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,32,16,16]"
+     ],
+     "count": 2,
+     "bytes": 4784384,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,256]",
+      "f32[1024,256]",
+      "f32[1024]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,1024]"
+     ],
+     "count": 2,
+     "bytes": 4726784,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,1024]{T}",
+      "f32[256,1024]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,256]"
+     ],
+     "count": 2,
+     "bytes": 4720640,
+     "tag": null
+    },
+    {
+     "op": "_scaled_dot_product_attention_math_for_mps",
+     "inputs": [
+      "f32[1,2,4096,32]{perm}",
+      "f32[1,2,256,32]{perm}",
+      "f32[1,2,256,32]{perm}"
+     ],
+     "args": [
+      "scale=0.1767766952966369"
+     ],
+     "outputs": [
+      "f32[1,2,4096,32]"
+     ],
+     "count": 2,
+     "bytes": 4456448,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,16384,32]{T}",
+      "f32[32]",
+      "f32[32]"
+     ],
+     "args": [
+      "[32]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,16384,32]",
+      "f32[1,16384,1]",
+      "f32[1,16384,1]"
+     ],
+     "count": 1,
+     "bytes": 4325632,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,1024,16,16]{cl}",
+      "f32[1024,1,3,3]",
+      "f32[1024]"
+     ],
+     "args": [
+      "[1,1]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1024"
+     ],
+     "outputs": [
+      "f32[1,1024,16,16]"
+     ],
+     "count": 2,
+     "bytes": 4276224,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,32,128,128]{cl}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,32,128,128]"
+     ],
+     "count": 1,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,4096,2,32]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,4096,2,32]"
+     ],
+     "count": 2,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "f32[1,256,1024]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,1024]{T}"
+     ],
+     "count": 2,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_scaled_dot_product_attention_math_for_mps",
+     "inputs": [
+      "f32[1,5,1024,32]{perm}",
+      "f32[1,5,256,32]{perm}",
+      "f32[1,5,256,32]{perm}"
+     ],
+     "args": [
+      "scale=0.1767766952966369"
+     ],
+     "outputs": [
+      "f32[1,5,1024,32]"
+     ],
+     "count": 2,
+     "bytes": 3276800,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,32,128,128]",
+      "f32[64,32,3,3]",
+      "f32[64]"
+     ],
+     "args": [
+      "[2,2]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,64,64,64]"
+     ],
+     "count": 1,
+     "bytes": 3219712,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,256,256]",
+      "f32[1,256,256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,256]"
+     ],
+     "count": 4,
+     "bytes": 3145728,
+     "tag": "pointwise"
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,64,64,64]{cl}",
+      "f32[64,64,4,4]",
+      "f32[64]"
+     ],
+     "args": [
+      "[4,4]",
+      "[0,0]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,64,16,16]"
+     ],
+     "count": 2,
+     "bytes": 2753024,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,256,256]",
+      "f32[256]",
+      "f32[256]"
+     ],
+     "args": [
+      "[256]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,256,256]",
+      "f32[1,256,1]",
+      "f32[1,256,1]"
+     ],
+     "count": 5,
+     "bytes": 2641920,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,1024,5,32]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,1024,5,32]"
+     ],
+     "count": 2,
+     "bytes": 2621440,
+     "tag": "pointwise"
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,160,32,32]{cl}",
+      "f32[160,160,2,2]",
+      "f32[160]"
+     ],
+     "args": [
+      "[2,2]",
+      "[0,0]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,160,16,16]"
+     ],
+     "count": 2,
+     "bytes": 2458880,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,160,32,32]",
+      "f32[256,160,3,3]",
+      "f32[256]"
+     ],
+     "args": [
+      "[2,2]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,256,16,16]"
+     ],
+     "count": 1,
+     "bytes": 2393088,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,4096,64]{T}",
+      "f32[64]",
+      "f32[64]"
+     ],
+     "args": [
+      "[64]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,4096,64]",
+      "f32[1,4096,1]",
+      "f32[1,4096,1]"
+     ],
+     "count": 1,
+     "bytes": 2130432,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,64,64,64]{cl}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,64,64,64]"
+     ],
+     "count": 1,
+     "bytes": 2097152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_scaled_dot_product_attention_math_for_mps",
+     "inputs": [
+      "f32[1,8,256,32]{perm}",
+      "f32[1,8,256,32]{perm}",
+      "f32[1,8,256,32]{perm}"
+     ],
+     "args": [
+      "scale=0.1767766952966369"
+     ],
+     "outputs": [
+      "f32[1,8,256,32]"
+     ],
+     "count": 2,
+     "bytes": 2097152,
+     "tag": null
+    },
+    {
+     "op": "convolution",
+     "inputs": [
+      "f32[1,64,64,64]",
+      "f32[160,64,3,3]",
+      "f32[160]"
+     ],
+     "args": [
+      "[2,2]",
+      "[1,1]",
+      "[1,1]",
+      "False",
+      "[0,0]",
+      "1"
+     ],
+     "outputs": [
+      "f32[1,160,32,32]"
+     ],
+     "count": 1,
+     "bytes": 2073216,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,1024,160]{T}",
+      "f32[256,160]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1024,256]"
+     ],
+     "count": 1,
+     "bytes": 1868800,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,160]",
+      "f32[160,160]",
+      "f32[160]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,160]"
+     ],
+     "count": 4,
+     "bytes": 1722880,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,1024,160]{T}",
+      "f32[160]",
+      "f32[160]"
+     ],
+     "args": [
+      "[160]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,1024,160]",
+      "f32[1,1024,1]",
+      "f32[1,1024,1]"
+     ],
+     "count": 1,
+     "bytes": 1320192,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,160,32,32]{cl}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,160,32,32]"
+     ],
+     "count": 1,
+     "bytes": 1310720,
+     "tag": "pointwise"
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,256,8,32]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,256,8,32]"
+     ],
+     "count": 2,
+     "bytes": 1048576,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,256]{T}",
+      "f32[256,256]",
+      "f32[256]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,256]"
+     ],
+     "count": 1,
+     "bytes": 787456,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,256,160]{T}",
+      "f32[160]",
+      "f32[160]"
+     ],
+     "args": [
+      "[160]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,256,160]",
+      "f32[1,256,1]",
+      "f32[1,256,1]"
+     ],
+     "count": 2,
+     "bytes": 662016,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,64]",
+      "f32[64,64]",
+      "f32[64]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,64]"
+     ],
+     "count": 4,
+     "bytes": 590848,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,256,256]{T}",
+      "f32[256]",
+      "f32[256]"
+     ],
+     "args": [
+      "[256]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,256,256]",
+      "f32[1,256,1]",
+      "f32[1,256,1]"
+     ],
+     "count": 1,
+     "bytes": 528384,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,256,16,16]{cl}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,256,16,16]"
+     ],
+     "count": 1,
+     "bytes": 524288,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,256,32]",
+      "f32[32,32]",
+      "f32[32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,256,32]"
+     ],
+     "count": 4,
+     "bytes": 279040,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,256,64]{T}",
+      "f32[64]",
+      "f32[64]"
+     ],
+     "args": [
+      "[64]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,256,64]",
+      "f32[1,256,1]",
+      "f32[1,256,1]"
+     ],
+     "count": 2,
+     "bytes": 267264,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[1,256,32]{T}",
+      "f32[32]",
+      "f32[32]"
+     ],
+     "args": [
+      "[32]",
+      "1e-05"
+     ],
+     "outputs": [
+      "f32[1,256,32]",
+      "f32[1,256,1]",
+      "f32[1,256,1]"
+     ],
+     "count": 2,
+     "bytes": 135680,
+     "tag": null
+    }
+   ]
+  }
+ }
+}

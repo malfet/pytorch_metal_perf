@@ -1,0 +1,1328 @@
+{
+ "model": "flux-dev",
+ "family": "diffusion",
+ "dtype": "bfloat16",
+ "input": "1024x1024 (4096 image + 512 text tokens)",
+ "note": "1 of 19 double + 2 of 38 single blocks",
+ "torch": "2.15.0a0+git119b177",
+ "phases": {
+  "forward": {
+   "calls": 222,
+   "wall_s": 0.6564812079886906,
+   "ops": [
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[1,4608,24,128]",
+      "f32[1,4608,1,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4608,24,128]"
+     ],
+     "count": 12,
+     "bytes": 1387266048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "bf16[1,4608,24,128]"
+     ],
+     "args": [
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[1,4608,24,128]"
+     ],
+     "count": 12,
+     "bytes": 1019215872,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,4608,24,128]",
+      "f32[1,4608,24,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,4608,24,128]"
+     ],
+     "count": 6,
+     "bytes": 1019215872,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "bf16[1,4608,3072]",
+      "bf16[1,4608,12288]"
+     ],
+     "args": [
+      "2"
+     ],
+     "outputs": [
+      "bf16[1,4608,15360]"
+     ],
+     "count": 2,
+     "bytes": 566231040,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4608,15360]",
+      "bf16[3072,15360]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 2,
+     "bytes": 528494592,
+     "tag": null
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "f32[1,4608,24,128]"
+     ],
+     "args": [
+      "dtype=bf16"
+     ],
+     "outputs": [
+      "bf16[1,4608,24,128]"
+     ],
+     "count": 6,
+     "bytes": 509607936,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4608,3072]",
+      "bf16[3072,3072]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 6,
+     "bytes": 453021696,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "bf16[1,4608,12288]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,12288]"
+     ],
+     "count": 2,
+     "bytes": 452984832,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4608,3072]",
+      "bf16[12288,3072]",
+      "bf16[12288]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,12288]"
+     ],
+     "count": 2,
+     "bytes": 434159616,
+     "tag": null
+    },
+    {
+     "op": "stack",
+     "inputs": [
+      "bf16[1,4608,24,64]",
+      "bf16[1,4608,24,64]{strided}"
+     ],
+     "args": [
+      "-1"
+     ],
+     "outputs": [
+      "bf16[1,4608,24,64,2]"
+     ],
+     "count": 6,
+     "bytes": 339738624,
+     "tag": null
+    },
+    {
+     "op": "_scaled_dot_product_attention_math_for_mps",
+     "inputs": [
+      "bf16[1,24,4608,128]{perm}",
+      "bf16[1,24,4608,128]{perm}",
+      "bf16[1,24,4608,128]{perm}"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,24,4608,128]"
+     ],
+     "count": 3,
+     "bytes": 339738624,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4096,3072]",
+      "bf16[3072,3072]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 4,
+     "bytes": 276848640,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,3072]",
+      "bf16[18432,3072]",
+      "bf16[18432]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,18432]"
+     ],
+     "count": 2,
+     "bytes": 226652160,
+     "tag": null
+    },
+    {
+     "op": "_fused_rms_norm",
+     "inputs": [
+      "bf16[1,4608,24,128]",
+      "bf16[128]"
+     ],
+     "args": [
+      "[128]",
+      "1e-06"
+     ],
+     "outputs": [
+      "bf16[1,4608,24,128]"
+     ],
+     "count": 4,
+     "bytes": 226493440,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4096,3072]",
+      "bf16[12288,3072]",
+      "bf16[12288]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,12288]"
+     ],
+     "count": 1,
+     "bytes": 201351168,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4096,12288]",
+      "bf16[3072,12288]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 1,
+     "bytes": 201332736,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "bf16[1,4096,12288]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,12288]"
+     ],
+     "count": 1,
+     "bytes": 201326592,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "bf16[1,512,24,128]",
+      "bf16[1,4096,24,128]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "bf16[1,4608,24,128]"
+     ],
+     "count": 3,
+     "bytes": 169869312,
+     "tag": null
+    },
+    {
+     "op": "neg",
+     "inputs": [
+      "bf16[1,4608,24,64]{strided}"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,24,64]"
+     ],
+     "count": 6,
+     "bytes": 169869312,
+     "tag": "pointwise"
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "bf16[1,4608,24,128]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "bf16[1,4608,24,128]"
+     ],
+     "count": 3,
+     "bytes": 169869312,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,4608,3072]",
+      "bf16[1,4608,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 2,
+     "bytes": 169869312,
+     "tag": "pointwise"
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "args": [
+      "[3072]",
+      "1e-06"
+     ],
+     "outputs": [
+      "bf16[1,4096,3072]",
+      "bf16[1,4096,1]",
+      "bf16[1,4096,1]"
+     ],
+     "count": 3,
+     "bytes": 151044096,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1,4096,3072]",
+      "bf16[1,1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 3,
+     "bytes": 151013376,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,4096,3072]",
+      "bf16[1,1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 3,
+     "bytes": 151013376,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,4096,3072]",
+      "bf16[1,4096,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 2,
+     "bytes": 150994944,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,3072]",
+      "bf16[9216,3072]",
+      "bf16[9216]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,9216]"
+     ],
+     "count": 2,
+     "bytes": 113332224,
+     "tag": null
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "args": [
+      "[3072]",
+      "1e-06"
+     ],
+     "outputs": [
+      "bf16[1,4608,3072]",
+      "bf16[1,4608,1]",
+      "bf16[1,4608,1]"
+     ],
+     "count": 2,
+     "bytes": 113283072,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1,4608,3072]",
+      "bf16[1,1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 2,
+     "bytes": 113258496,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,4608,3072]",
+      "bf16[1,1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 2,
+     "bytes": 113258496,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1,1,3072]",
+      "bf16[1,4608,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 2,
+     "bytes": 113258496,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "bf16[1,512,3072]",
+      "bf16[1,4096,3072]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "bf16[1,4608,3072]"
+     ],
+     "count": 2,
+     "bytes": 113246208,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,512,3072]",
+      "bf16[3072,3072]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 4,
+     "bytes": 100687872,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1,1,3072]",
+      "bf16[1,4096,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 2,
+     "bytes": 100675584,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_fused_rms_norm",
+     "inputs": [
+      "bf16[1,4096,24,128]",
+      "bf16[128]"
+     ],
+     "args": [
+      "[128]",
+      "1e-06"
+     ],
+     "outputs": [
+      "bf16[1,4096,24,128]"
+     ],
+     "count": 2,
+     "bytes": 100663808,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,512,3072]",
+      "bf16[12288,3072]",
+      "bf16[12288]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,12288]"
+     ],
+     "count": 1,
+     "bytes": 91250688,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,512,12288]",
+      "bf16[3072,12288]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 1,
+     "bytes": 91232256,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,3072]",
+      "bf16[3072,3072]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,3072]"
+     ],
+     "count": 3,
+     "bytes": 56678400,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,3072]",
+      "bf16[6144,3072]",
+      "bf16[6144]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,6144]"
+     ],
+     "count": 1,
+     "bytes": 37779456,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,512,4096]",
+      "bf16[3072,4096]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 1,
+     "bytes": 32512000,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4096,64]",
+      "bf16[3072,64]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,3072]"
+     ],
+     "count": 1,
+     "bytes": 26089472,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,4096,3072]",
+      "bf16[64,3072]",
+      "bf16[64]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,4096,64]"
+     ],
+     "count": 1,
+     "bytes": 26083456,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "bf16[1,512,12288]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,12288]"
+     ],
+     "count": 1,
+     "bytes": 25165824,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,512,3072]",
+      "bf16[1,512,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 2,
+     "bytes": 18874368,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1,512,3072]",
+      "bf16[1,1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 2,
+     "bytes": 12595200,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,512,3072]",
+      "bf16[1,1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 2,
+     "bytes": 12595200,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1,1,3072]",
+      "bf16[1,512,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,512,3072]"
+     ],
+     "count": 2,
+     "bytes": 12595200,
+     "tag": "pointwise"
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "bf16[1,512,3072]"
+     ],
+     "args": [
+      "[3072]",
+      "1e-06"
+     ],
+     "outputs": [
+      "bf16[1,512,3072]",
+      "bf16[1,512,1]",
+      "bf16[1,512,1]"
+     ],
+     "count": 2,
+     "bytes": 12587008,
+     "tag": null
+    },
+    {
+     "op": "_fused_rms_norm",
+     "inputs": [
+      "bf16[1,512,24,128]",
+      "bf16[128]"
+     ],
+     "args": [
+      "[128]",
+      "1e-06"
+     ],
+     "outputs": [
+      "bf16[1,512,24,128]"
+     ],
+     "count": 2,
+     "bytes": 12583424,
+     "tag": null
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "f32[4608,16]",
+      "f32[4608,56]",
+      "f32[4608,56]"
+     ],
+     "args": [
+      "-1"
+     ],
+     "outputs": [
+      "f32[4608,128]"
+     ],
+     "count": 2,
+     "bytes": 9437184,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[4608,28,2]{bcast}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[4608,28,2]"
+     ],
+     "count": 4,
+     "bytes": 8257536,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,768]",
+      "bf16[3072,768]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,3072]"
+     ],
+     "count": 1,
+     "bytes": 4732416,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "bf16[1,256]",
+      "bf16[3072,256]",
+      "bf16[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,3072]"
+     ],
+     "count": 2,
+     "bytes": 3171328,
+     "tag": null
+    },
+    {
+     "op": "cos",
+     "inputs": [
+      "f32[4608,28]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[4608,28]"
+     ],
+     "count": 2,
+     "bytes": 2064384,
+     "tag": "pointwise"
+    },
+    {
+     "op": "sin",
+     "inputs": [
+      "f32[4608,28]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[4608,28]"
+     ],
+     "count": 2,
+     "bytes": 2064384,
+     "tag": "pointwise"
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[4608,8,2]{bcast}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[4608,8,2]"
+     ],
+     "count": 2,
+     "bytes": 1179648,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[4608,1]{strided}",
+      "f32[28]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[4608,28]"
+     ],
+     "count": 2,
+     "bytes": 1069280,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cos",
+     "inputs": [
+      "f32[4608,8]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[4608,8]"
+     ],
+     "count": 1,
+     "bytes": 294912,
+     "tag": "pointwise"
+    },
+    {
+     "op": "sin",
+     "inputs": [
+      "f32[4608,8]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[4608,8]"
+     ],
+     "count": 1,
+     "bytes": 294912,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[4608,1]{strided}",
+      "f32[8]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[4608,8]"
+     ],
+     "count": 1,
+     "bytes": 165920,
+     "tag": "pointwise"
+    },
+    {
+     "op": "silu",
+     "inputs": [
+      "bf16[1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,3072]"
+     ],
+     "count": 8,
+     "bytes": 98304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "bf16[4608,3]"
+     ],
+     "args": [
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[4608,3]"
+     ],
+     "count": 1,
+     "bytes": 82944,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,1,3072]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "bf16[1,1,3072]"
+     ],
+     "count": 6,
+     "bytes": 73728,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "bf16[512,3]",
+      "bf16[4096,3]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[4608,3]"
+     ],
+     "count": 1,
+     "bytes": 55296,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,3072]",
+      "bf16[1,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "bf16[1,3072]"
+     ],
+     "count": 2,
+     "bytes": 36864,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "bf16[1,3072]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "bf16[1,3072]"
+     ],
+     "count": 1,
+     "bytes": 12288,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "f32[1,128]",
+      "f32[1,128]"
+     ],
+     "args": [
+      "-1"
+     ],
+     "outputs": [
+      "f32[1,256]"
+     ],
+     "count": 4,
+     "bytes": 8192,
+     "tag": null
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "f32[1,256]"
+     ],
+     "args": [
+      "dtype=bf16"
+     ],
+     "outputs": [
+      "bf16[1,256]"
+     ],
+     "count": 2,
+     "bytes": 3072,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[1,1]",
+      "f32[1,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,128]"
+     ],
+     "count": 2,
+     "bytes": 2056,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[128]"
+     ],
+     "args": [
+      "-9.210340371976184"
+     ],
+     "outputs": [
+      "f32[128]"
+     ],
+     "count": 2,
+     "bytes": 2048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[128]"
+     ],
+     "args": [
+      "128"
+     ],
+     "outputs": [
+      "f32[128]"
+     ],
+     "count": 2,
+     "bytes": 2048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "exp",
+     "inputs": [
+      "f32[128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[128]"
+     ],
+     "count": 2,
+     "bytes": 2048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[1,128]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "f32[1,128]"
+     ],
+     "count": 2,
+     "bytes": 2048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "sin",
+     "inputs": [
+      "f32[1,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,128]"
+     ],
+     "count": 2,
+     "bytes": 2048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cos",
+     "inputs": [
+      "f32[1,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,128]"
+     ],
+     "count": 2,
+     "bytes": 2048,
+     "tag": "pointwise"
+    },
+    {
+     "op": "arange.start",
+     "inputs": [],
+     "args": [
+      "0",
+      "128",
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[128]"
+     ],
+     "count": 2,
+     "bytes": 1024,
+     "tag": null
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[28]"
+     ],
+     "args": [
+      "56"
+     ],
+     "outputs": [
+      "f32[28]"
+     ],
+     "count": 2,
+     "bytes": 448,
+     "tag": "pointwise"
+    },
+    {
+     "op": "pow.Scalar",
+     "inputs": [
+      "f32[28]"
+     ],
+     "args": [
+      "10000.0"
+     ],
+     "outputs": [
+      "f32[28]"
+     ],
+     "count": 2,
+     "bytes": 448,
+     "tag": "pointwise"
+    },
+    {
+     "op": "reciprocal",
+     "inputs": [
+      "f32[28]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[28]"
+     ],
+     "count": 2,
+     "bytes": 448,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[28]"
+     ],
+     "args": [
+      "1.0"
+     ],
+     "outputs": [
+      "f32[28]"
+     ],
+     "count": 2,
+     "bytes": 448,
+     "tag": "pointwise"
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[28]"
+     ],
+     "args": [
+      "1.0"
+     ],
+     "outputs": [
+      "f32[28]"
+     ],
+     "count": 2,
+     "bytes": 448,
+     "tag": "pointwise"
+    },
+    {
+     "op": "arange.start_step",
+     "inputs": [],
+     "args": [
+      "0",
+      "56",
+      "2",
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[28]"
+     ],
+     "count": 2,
+     "bytes": 224,
+     "tag": null
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[8]"
+     ],
+     "args": [
+      "16"
+     ],
+     "outputs": [
+      "f32[8]"
+     ],
+     "count": 1,
+     "bytes": 64,
+     "tag": "pointwise"
+    },
+    {
+     "op": "pow.Scalar",
+     "inputs": [
+      "f32[8]"
+     ],
+     "args": [
+      "10000.0"
+     ],
+     "outputs": [
+      "f32[8]"
+     ],
+     "count": 1,
+     "bytes": 64,
+     "tag": "pointwise"
+    },
+    {
+     "op": "reciprocal",
+     "inputs": [
+      "f32[8]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8]"
+     ],
+     "count": 1,
+     "bytes": 64,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[8]"
+     ],
+     "args": [
+      "1.0"
+     ],
+     "outputs": [
+      "f32[8]"
+     ],
+     "count": 1,
+     "bytes": 64,
+     "tag": "pointwise"
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[8]"
+     ],
+     "args": [
+      "1.0"
+     ],
+     "outputs": [
+      "f32[8]"
+     ],
+     "count": 1,
+     "bytes": 64,
+     "tag": "pointwise"
+    },
+    {
+     "op": "arange.start_step",
+     "inputs": [],
+     "args": [
+      "0",
+      "16",
+      "2",
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[8]"
+     ],
+     "count": 1,
+     "bytes": 32,
+     "tag": null
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "bf16[1,1]"
+     ],
+     "args": [
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[1,1]"
+     ],
+     "count": 2,
+     "bytes": 12,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "bf16[1]"
+     ],
+     "args": [
+      "1000"
+     ],
+     "outputs": [
+      "bf16[1]"
+     ],
+     "count": 2,
+     "bytes": 8,
+     "tag": "pointwise"
+    }
+   ]
+  }
+ }
+}

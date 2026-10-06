@@ -59,8 +59,21 @@ and traffic scale.
 | audio | wav2vec2-base | float32 | 10 s audio at 16 kHz | forward | 190 | 30 | 1,771 |
 | audio | whisper-small | float16 | 30 s audio (80x3000 mel) | encoder | 224 | 19 | 1,577 |
 | audio | whisper-small | float16 | 30 s audio (80x3000 mel) | decode | 260 | 17 | 320 |
+| diffusion | flux-dev | bfloat16 | 1024x1024 (4096 image + 512 text tokens) | forward | 222 | 89 | 10,634 |
+| diffusion | flux-vae-decode | bfloat16 | latent 1x16x128x128 | forward | 132 | 43 | 32,197 |
+| diffusion | qwen-image | bfloat16 | 1024x1024 (4096 image + 128 text tokens) | forward | 231 | 82 | 7,248 |
 | diffusion | sd15-unet | float16 | 512x512, CFG batch 2 (latent 2x4x64x64) | forward | 760 | 171 | 9,407 |
 | diffusion | sd15-vae-decode | float16 | latent 1x4x64x64 -> 512x512 image | forward | 133 | 44 | 8,024 |
+| diffusion | sd3.5-large | bfloat16 | 1024x1024, CFG batch 2 (4096 image + 333 text tokens) | forward | 177 | 66 | 8,836 |
+| diffusion | sdxl-unet | float16 | 1024x1024, CFG batch 2 (latent 2x4x128x128) | forward | 1,984 | 134 | 41,255 |
+| diffusion | sdxl-vae-decode | bfloat16 | latent 1x4x128x128 | forward | 133 | 44 | 32,197 |
+| video | ltx-video | bfloat16 | 33 frames at 512x768 (1920 video + 128 text tokens) | forward | 175 | 70 | 2,939 |
+| video | ltx-video-vae-decode | bfloat16 | latent 1x128x5x16x24 | forward | 517 | 98 | 54,108 |
+| video | wan-vae-decode | bfloat16 | latent 1x16x3x40x60 | forward | 1,284 | 218 | 98,995 |
+| video | wan2.1-1.3b | bfloat16 | 33 frames at 320x480 (5400 video + 512 text tokens) | forward | 160 | 54 | 5,544 |
+| preprocessor | depth-anything | float32 | 3x518x518 | forward | 255 | 50 | 1,796 |
+| preprocessor | segformer-ade | float32 | 3x512x512 | forward | 151 | 69 | 805 |
+| preprocessor | zoedepth | float32 | 3x384x512 | forward | 818 | 175 | 13,046 |
 
 ## Where the traffic goes
 
@@ -97,8 +110,21 @@ tagged pointwise in aten (add, mul, silu, gelu, where, …).
 | wav2vec2-base | forward | 36% | 16% | 4% | 28% | 11% |  |  | 2% |  |  |  |  |  | 2% |
 | whisper-small | encoder | 40% | 1% | 7% | 31% | 7% |  |  | 13% |  |  |  |  |  |  |
 | whisper-small | decode | 83% |  | 17% |  |  |  |  |  |  |  |  |  |  |  |
+| flux-dev | forward | 26% |  | 3% | 39% | 6% |  |  | 26% |  |  |  |  |  |  |
+| flux-vae-decode | forward |  | 29% | 2% | 44% | 22% |  |  | 3% |  |  |  |  |  |  |
+| qwen-image | forward | 32% |  | 3% | 37% | 3% |  | 3% | 22% |  |  |  |  |  |  |
 | sd15-unet | forward | 18% | 18% | 31% | 23% | 6% |  |  | 4% |  |  |  |  |  |  |
 | sd15-vae-decode | forward |  | 30% | 1% | 44% | 22% |  |  | 3% |  |  |  |  |  |  |
+| sd3.5-large | forward | 25% |  | 4% | 43% | 5% |  | 4% | 19% |  |  |  |  |  |  |
+| sdxl-unet | forward | 37% | 5% | 6% | 38% | 9% |  |  | 6% |  |  |  |  |  |  |
+| sdxl-vae-decode | forward |  | 29% | 2% | 44% | 22% |  |  | 3% |  |  |  |  |  |  |
+| ltx-video | forward | 23% |  | 3% | 44% | 4% |  | 2% | 24% |  |  |  |  |  |  |
+| ltx-video-vae-decode | forward |  | 10% |  | 44% |  |  | 9% | 37% |  |  |  |  |  |  |
+| wan-vae-decode | forward |  | 9% |  | 43% |  |  | 6% | 40% |  |  |  |  |  | 2% |
+| wan2.1-1.3b | forward | 19% |  | 4% | 39% | 12% |  |  | 26% |  |  |  |  |  |  |
+| depth-anything | forward | 29% | 17% | 5% | 35% | 6% |  |  | 8% |  |  |  |  |  |  |
+| segformer-ade | forward | 18% | 24% | 2% | 17% | 10% |  |  | 28% |  |  |  |  |  |  |
+| zoedepth | forward | 19% | 8% | 9% | 24% | 2% | 1% |  | 22% | 14% |  |  |  |  |  |
 
 ## Dtypes and layouts
 
@@ -136,8 +162,21 @@ columns are shares of traffic in ops with at least one input of that layout.
 | wav2vec2-base | forward | float32 |  | 2% | 6% |  |  |  |
 | whisper-small | encoder | float16 | 0% | 21% | 13% |  |  |  |
 | whisper-small | decode | float16 | 0% |  |  |  |  |  |
+| flux-dev | forward | bfloat16 | 26% |  | 5% |  |  | 5% |
+| flux-vae-decode | forward | bfloat16 | 0% |  |  | 2% |  |  |
+| qwen-image | forward | bfloat16 | 17% |  | 4% |  |  |  |
 | sd15-unet | forward | float16 | 0% | 2% | 33% | 1% |  | 9% |
 | sd15-vae-decode | forward | float16 | 0% |  |  | 2% |  |  |
+| sd3.5-large | forward | bfloat16 | 17% | 11% | 39% |  |  | 11% |
+| sdxl-unet | forward | float16 | 0% |  | 10% |  |  | 19% |
+| sdxl-vae-decode | forward | bfloat16 | 0% |  |  | 2% |  |  |
+| ltx-video | forward | bfloat16 | 37% | 1% | 5% |  | 2% | 3% |
+| ltx-video-vae-decode | forward | bfloat16 | 38% | 62% |  |  |  | 5% |
+| wan-vae-decode | forward | bfloat16 | 35% |  | 13% |  | 17% | 2% |
+| wan2.1-1.3b | forward | bfloat16 | 38% | 29% | 6% |  |  | 8% |
+| depth-anything | forward | float32 |  |  | 8% | 1% |  |  |
+| segformer-ade | forward | float32 |  | 17% | 2% | 20% |  |  |
+| zoedepth | forward | float32 |  |  | 23% |  |  |  |
 
 ## Coverage against the benchmark suite
 
@@ -147,42 +186,46 @@ the suite does not measure it. *Example* is the single heaviest signature.
 
 | op | category | mean share | models | dtypes | non-dense layouts | pmp | example |
 |---|---|---:|---:|---|---|---|---|
-| `linear` | matmul | 37.6% | 20 | bf16, f16, f32 | T, perm, strided | matmul | gemma-2-2b: `bf16[1,512,2304] · bf16[9216,2304]` |
-| `add` | elementwise | 10.7% | 20 | bf16, f16, f32, i32, i64 | T, cl, perm, strided | binary | llama-3.2-1b: `bf16[8192,2048]` |
-| `convolution` | conv | 7.7% | 12 | f16, f32 | T, cl |  | sd15-vae-decode: `f16[1,128,512,512] · f16[128,128,3,3] · f16[128]` |
-| `mul` | elementwise | 7.1% | 15 | bf16, f16, f32, i32, i64 | T, cl, perm, strided | binary | llama-3.2-1b: `bf16[8192,2048]` |
-| `native_batch_norm` | norm | 4.8% | 5 | f16, f32 | cl |  | resnet50: `f32[8,256,56,56] · f32[256] · f32[256] · …(+2)` |
-| `gelu` | elementwise | 3.7% | 8 | bf16, f16, f32 | strided |  | gemma-2-2b: `bf16[1,512,9216]` |
-| `_scaled_dot_product_attention_math_for_mps` | attention | 3.1% | 12 | bf16, f16, f32 | perm, strided |  | sd15-unet: `f16[2,8,4096,40]{perm} · f16[2,8,4096,40]{perm} · f16[2,8,4096,40]{perm}` |
-| `relu` | elementwise | 3.0% | 5 | f16, f32 | cl |  | resnet50: `f32[8,256,56,56]` |
-| `clone` | copy/layout | 2.1% | 14 | bf16, f16, f32, i32, i64 | bcast, cl, perm, strided |  | vit_b_16: `f32[3,197,8,768]{perm}` |
-| `silu` | elementwise | 2.0% | 6 | bf16, f16, f32 |  |  | sd15-vae-decode: `f16[1,128,512,512]` |
-| `native_layer_norm` | norm | 1.7% | 9 | f16, f32 | T, perm | normalization | vit_b_16: `f32[8,197,768]{perm} · f32[768] · f32[768]` |
-| `_to_copy` | copy/layout | 1.4% | 8 | bf16, bool, f32, i64 | perm |  | gemma-2-2b: `bf16[1,512,2304]` |
-| `cat` | copy/layout | 1.4% | 12 | bf16, f16, f32, i64 | T, bcast, perm, strided |  | phi-2: `f16[1,32,512,80] · f16[1,32,1,80]` |
-| `pow` | elementwise | 1.2% | 7 | f16, f32 |  | binary | gemma-2-2b: `f32[1,512,2304]` |
-| `native_group_norm` | norm | 1.1% | 3 | f16, f32 | cl |  | sd15-vae-decode: `f16[1,128,512,512] · f16[128] · f16[128]` |
-| `linear_backward` | matmul | 1.0% | 2 | bf16, f32 |  |  | llama-3.2-1b: `bf16[1,256,2048] · bf16[1,256,8192] · bf16[8192,2048]` |
-| `bmm` | matmul | 1.0% | 7 | f32 | T, perm |  | llama-3.2-1b: `f32[32,256,64]{perm} · f32[32,64,256]{T}` |
-| `div` | elementwise | 0.9% | 7 | bf16, f16, f32 | bcast, cl, strided | binary | llama-3.2-1b: `bf16[8192,2048]` |
-| `mean` | reduction | 0.7% | 12 | f16, f32 | cl | reduction | gemma-2-2b: `f32[1,512,2304]` |
-| `addmm` | matmul | 0.7% | 1 | f32 |  | matmul | gpt2: `f32[3072] · f32[512,768] · f32[768,3072]` |
-| `addcmul` | elementwise | 0.6% | 1 | bf16 |  |  | llama-3.2-1b: `bf16[8192,2048] · bf16[8192,2048] · bf16[8192,2048]` |
-| `addcdiv` | elementwise | 0.6% | 1 | bf16 |  |  | llama-3.2-1b: `bf16[8192,2048] · bf16[8192,2048] · bf16[8192,2048]` |
-| `convolution_backward` | conv | 0.6% | 1 | f32 |  |  | resnet50: `f32[8,256,56,56] · f32[8,64,56,56] · f32[256,64,1,1]` |
-| `hardswish` | elementwise | 0.6% | 2 | f32 |  |  | fasterrcnn_mobilenet: `f32[1,672,50,68]` |
-| `native_batch_norm_backward` | norm | 0.5% | 1 | f32 |  |  | resnet50: `f32[8,256,56,56] · f32[8,256,56,56] · f32[256] · …(+4)` |
-| `lerp` | elementwise | 0.5% | 1 | bf16 |  |  | llama-3.2-1b: `bf16[8192,2048] · bf16[8192,2048]` |
-| `threshold_backward` | elementwise | 0.5% | 1 | f32 |  |  | resnet50: `f32[8,256,56,56] · f32[8,256,56,56]` |
-| `_softmax` | softmax | 0.5% | 3 | f32 |  | normalization | t5-small: `f32[1,8,512,512]` |
-| `tanh` | elementwise | 0.4% | 4 | bf16, f16, f32 |  | unary | phi-2: `f16[1,512,10240]` |
-| `sqrt` | elementwise | 0.3% | 2 | bf16, f32 |  | unary | llama-3.2-1b: `bf16[8192,2048]` |
-| `index_put` | gather/scatter | 0.3% | 1 | f32, i64 |  |  | fasterrcnn_mobilenet: `f32[1000,256,7,7] · i64[1000] · f32[1000,256,7,7]` |
-| `constant_pad_nd` | copy/layout | 0.1% | 2 | f32, i64 |  |  | swin_t: `f32[8,56,56,96]` |
-| `embedding` | gather/scatter | 0.1% | 9 | bf16, f16, f32, i64 | bcast |  | t5-small: `f32[32,8] · i64[512,512]` |
-| `neg` | elementwise | 0.1% | 6 | bf16, f16, i64 | strided | unary | phi-2: `f16[1,32,512,16]{strided}` |
-| `clamp` | elementwise | 0.1% | 2 | f16, f32 | T, strided |  | whisper-small: `f16[1,1500,768]{T}` |
-| `upsample_nearest2d` | copy/layout | 0.1% | 3 | f16, f32 | cl |  | sd15-vae-decode: `f16[1,256,256,256]` |
+| `linear` | matmul | 31.6% | 31 | bf16, f16, f32 | T, perm, strided | matmul | sdxl-unet: `f16[2,1024,1280] · f16[10240,1280] · f16[10240]` |
+| `add` | elementwise | 10.8% | 33 | bf16, f16, f32, i32, i64 | T, cl, perm, strided | binary | sdxl-unet: `f16[2,1024,1280] · f16[2,1024,1280]` |
+| `convolution` | conv | 8.4% | 22 | bf16, f16, f32 | T, cl, perm |  | wan-vae-decode: `bf16[1,96,6,322,482] · bf16[96,96,3,3,3] · bf16[96]` |
+| `mul` | elementwise | 8.0% | 25 | bf16, c64, f16, f32, i32, i64 | T, cl, perm, strided | binary | ltx-video-vae-decode: `bf16[1,33,128,192,128]{T} · f32[1,33,128,192,1]` |
+| `gelu` | elementwise | 4.0% | 17 | bf16, f16, f32 | T, strided |  | sdxl-unet: `f16[2,1024,5120]{strided}` |
+| `_to_copy` | copy/layout | 3.8% | 16 | bf16, bool, f16, f32, i64 | T, perm, strided |  | ltx-video-vae-decode: `f32[1,33,128,192,128]{T}` |
+| `native_batch_norm` | norm | 3.5% | 6 | f16, f32 | cl |  | resnet50: `f32[8,256,56,56] · f32[256] · f32[256] · …(+2)` |
+| `_scaled_dot_product_attention_math_for_mps` | attention | 3.2% | 24 | bf16, f16, f32 | perm, strided |  | sd15-unet: `f16[2,8,4096,40]{perm} · f16[2,8,4096,40]{perm} · f16[2,8,4096,40]{perm}` |
+| `silu` | elementwise | 2.8% | 16 | bf16, f16, f32 | perm |  | ltx-video-vae-decode: `bf16[1,128,33,128,192]` |
+| `clone` | copy/layout | 2.4% | 25 | bf16, f16, f32, i32, i64 | T, bcast, cl, perm, strided |  | zoedepth: `f32[16,769,769]{perm}` |
+| `relu` | elementwise | 2.4% | 8 | f16, f32 | cl |  | resnet50: `f32[8,256,56,56]` |
+| `cat` | copy/layout | 2.3% | 23 | bf16, bool, c64, f16, f32, i64 | T, bcast, cl3d, perm, strided |  | ltx-video-vae-decode: `bf16[1,128,1,128,192] · bf16[1,128,33,128,192] · bf16[1,128,1,128,192]` |
+| `native_layer_norm` | norm | 2.1% | 19 | bf16, f16, f32 | T, perm | normalization | sdxl-unet: `f16[2,1024,1280] · f16[1280] · f16[1280]` |
+| `native_group_norm` | norm | 1.8% | 6 | bf16, f16, f32 | cl |  | flux-vae-decode: `bf16[1,128,1024,1024] · bf16[128] · bf16[128]` |
+| `pow` | elementwise | 1.6% | 13 | f16, f32 | T, perm | binary | ltx-video-vae-decode: `f32[1,33,128,192,128]{T}` |
+| `div` | elementwise | 1.6% | 17 | bf16, f16, f32 | bcast, cl, perm, strided | binary | wan-vae-decode: `f32[1,96,4,320,480] · f32[1,96,4,320,480]{bcast}` |
+| `mean` | reduction | 0.9% | 16 | f16, f32 | T, cl, perm | reduction | ltx-video-vae-decode: `f32[1,33,128,192,128]{T}` |
+| `linear_backward` | matmul | 0.7% | 2 | bf16, f32 |  |  | llama-3.2-1b: `bf16[1,256,2048] · bf16[1,256,8192] · bf16[8192,2048]` |
+| `bmm` | matmul | 0.7% | 7 | f32 | T, perm |  | llama-3.2-1b: `f32[32,256,64]{perm} · f32[32,64,256]{T}` |
+| `addmm` | matmul | 0.5% | 1 | f32 |  | matmul | gpt2: `f32[3072] · f32[512,768] · f32[768,3072]` |
+| `addcmul` | elementwise | 0.4% | 1 | bf16 |  |  | llama-3.2-1b: `bf16[8192,2048] · bf16[8192,2048] · bf16[8192,2048]` |
+| `addcdiv` | elementwise | 0.4% | 1 | bf16 |  |  | llama-3.2-1b: `bf16[8192,2048] · bf16[8192,2048] · bf16[8192,2048]` |
+| `upsample_bilinear2d` | copy/layout | 0.4% | 4 | f32 | cl |  | zoedepth: `f32[1,128,192,256]` |
+| `convolution_backward` | conv | 0.4% | 1 | f32 |  |  | resnet50: `f32[8,256,56,56] · f32[8,64,56,56] · f32[256,64,1,1]` |
+| `hardswish` | elementwise | 0.4% | 2 | f32 |  |  | fasterrcnn_mobilenet: `f32[1,672,50,68]` |
+| `native_batch_norm_backward` | norm | 0.4% | 1 | f32 |  |  | resnet50: `f32[8,256,56,56] · f32[8,256,56,56] · f32[256] · …(+4)` |
+| `_softmax` | softmax | 0.3% | 4 | f32 |  | normalization | t5-small: `f32[1,8,512,512]` |
+| `lerp` | elementwise | 0.3% | 1 | bf16 |  |  | llama-3.2-1b: `bf16[8192,2048] · bf16[8192,2048]` |
+| `index` | gather/scatter | 0.3% | 4 | f16, f32, i64 |  |  | zoedepth: `f32[2964,16] · i64[591361]` |
+| `threshold_backward` | elementwise | 0.3% | 1 | f32 |  |  | resnet50: `f32[8,256,56,56] · f32[8,256,56,56]` |
+| `tanh` | elementwise | 0.3% | 4 | bf16, f16, f32 |  | unary | phi-2: `f16[1,512,10240]` |
+| `constant_pad_nd` | copy/layout | 0.3% | 3 | bf16, f32, i64 | perm, strided |  | wan-vae-decode: `bf16[1,96,6,320,480]` |
+| `upsample_nearest2d` | copy/layout | 0.2% | 6 | bf16, f16, f32 | cl |  | flux-vae-decode: `bf16[1,256,512,512]` |
+| `_fused_rms_norm` | norm | 0.2% | 3 | bf16 |  | normalization | flux-dev: `bf16[1,4608,24,128] · bf16[128]` |
+| `sqrt` | elementwise | 0.2% | 2 | bf16, f32 |  | unary | llama-3.2-1b: `bf16[8192,2048]` |
+| `index_put` | gather/scatter | 0.2% | 1 | f32, i64 |  |  | fasterrcnn_mobilenet: `f32[1000,256,7,7] · i64[1000] · f32[1000,256,7,7]` |
+| `neg` | elementwise | 0.1% | 8 | bf16, f16, i64 | strided | unary | flux-dev: `bf16[1,4608,24,64]{strided}` |
+| `norm` | reduction | 0.1% | 1 | f32 | perm |  | wan-vae-decode: `f32[1,96,4,320,480]` |
+| `stack` | copy/layout | 0.1% | 4 | bf16, f32, i32 | bcast, strided |  | flux-dev: `bf16[1,4608,24,64] · bf16[1,4608,24,64]{strided}` |
+| `copy_` | copy/layout | 0.1% | 2 | bf16, f32 | strided |  | wan2.1-1.3b: `bf16[1,5400,12,64]{strided} · bf16[1,5400,12,64]` |
 
 ## Per-model detail
 
@@ -708,7 +751,64 @@ The 12 heaviest op signatures of each phase, by traffic.
 | 12 | 0% | `gelu` | `f16[1,1,3072]` |  |
 | 24 | 0% | `mul.Tensor` | `f16[1,1,768]` | `0.125` |
 
-### Diffusion
+### Diffusion (image)
+
+#### flux-dev (bfloat16, 1024x1024 (4096 image + 512 text tokens)) — 1 of 19 double + 2 of 38 single blocks
+
+**forward** — 222 op calls, 10,634 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 12 | 12% | `mul.Tensor` | `f32[1,4608,24,128] · f32[1,4608,1,128]` |  |
+| 12 | 9% | `_to_copy` | `bf16[1,4608,24,128]` | `dtype=f32` |
+| 6 | 9% | `add.Tensor` | `f32[1,4608,24,128] · f32[1,4608,24,128]` |  |
+| 2 | 5% | `cat` | `bf16[1,4608,3072] · bf16[1,4608,12288]` | `2` |
+| 2 | 5% | `linear` | `bf16[1,4608,15360] · bf16[3072,15360] · bf16[3072]` |  |
+| 6 | 5% | `_to_copy` | `f32[1,4608,24,128]` | `dtype=bf16` |
+| 6 | 4% | `linear` | `bf16[1,4608,3072] · bf16[3072,3072] · bf16[3072]` |  |
+| 2 | 4% | `gelu` | `bf16[1,4608,12288]` |  |
+| 2 | 4% | `linear` | `bf16[1,4608,3072] · bf16[12288,3072] · bf16[12288]` |  |
+| 6 | 3% | `stack` | `bf16[1,4608,24,64] · bf16[1,4608,24,64]{strided}` | `-1` |
+| 3 | 3% | `_scaled_dot_product_attention_math_for_mps` | `bf16[1,24,4608,128]{perm} · bf16[1,24,4608,128]{perm} · bf16[1,24,4608,128]{perm}` |  |
+| 4 | 2% | `linear` | `bf16[1,4096,3072] · bf16[3072,3072] · bf16[3072]` |  |
+
+#### flux-vae-decode (bfloat16, latent 1x16x128x128)
+
+**forward** — 132 op calls, 32,197 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 6 | 10% | `native_group_norm` | `bf16[1,128,1024,1024] · bf16[128] · bf16[128]` | `1, 128, 1048576, 32, 1e-06` |
+| 6 | 10% | `silu` | `bf16[1,128,1024,1024]` |  |
+| 5 | 8% | `convolution` | `bf16[1,128,1024,1024] · bf16[128,128,3,3] · bf16[128]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 3 | 7% | `add.Tensor` | `bf16[1,128,1024,1024] · bf16[1,128,1024,1024]` |  |
+| 3 | 5% | `div.Tensor` | `bf16[1,128,1024,1024]` | `1.0` |
+| 5 | 4% | `convolution` | `bf16[1,256,512,512] · bf16[256,256,3,3] · bf16[256]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 5 | 4% | `native_group_norm` | `bf16[1,256,512,512] · bf16[256] · bf16[256]` | `1, 256, 262144, 32, 1e-06` |
+| 5 | 4% | `silu` | `bf16[1,256,512,512]` |  |
+| 3 | 4% | `add.Tensor` | `bf16[1,256,512,512] · bf16[1,256,512,512]` |  |
+| 1 | 3% | `convolution` | `bf16[1,256,1024,1024] · bf16[256,256,3,3] · bf16[256]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 1 | 3% | `native_group_norm` | `bf16[1,256,1024,1024] · bf16[256] · bf16[256]` | `1, 256, 1048576, 32, 1e-06` |
+| 1 | 3% | `silu` | `bf16[1,256,1024,1024]` |  |
+
+#### qwen-image (bfloat16, 1024x1024 (4096 image + 128 text tokens)) — 2 of 60 layers
+
+**forward** — 231 op calls, 7,248 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 8 | 8% | `_to_copy` | `bf16[1,4096,24,128]` | `dtype=f32` |
+| 8 | 8% | `_to_copy` | `f32[1,4096,24,128]` | `dtype=bf16` |
+| 8 | 7% | `linear` | `bf16[1,4096,3072] · bf16[3072,3072] · bf16[3072]` |  |
+| 4 | 6% | `linear` | `bf16[1,3072] · bf16[18432,3072] · bf16[18432]` |  |
+| 4 | 5% | `mul.Tensor` | `c64[1,4096,24,64] · c64[4096,1,64]` |  |
+| 2 | 5% | `linear` | `bf16[1,4096,3072] · bf16[12288,3072] · bf16[12288]` |  |
+| 2 | 5% | `linear` | `bf16[1,4096,12288] · bf16[3072,12288] · bf16[3072]` |  |
+| 4 | 5% | `pow.Tensor_Scalar` | `f32[1,4096,24,128]` | `2` |
+| 2 | 5% | `gelu` | `bf16[1,4096,12288]` |  |
+| 6 | 4% | `cat` | `bf16[1,128,24,128] · bf16[1,4096,24,128]` | `1` |
+| 4 | 4% | `mul.Tensor` | `bf16[1,4096,24,128] · f32[1,4096,24,1]` |  |
+| 4 | 4% | `add.Tensor` | `bf16[1,4096,3072] · bf16[1,4096,3072]` |  |
 
 #### sd15-unet (float16, 512x512, CFG batch 2 (latent 2x4x64x64))
 
@@ -747,4 +847,198 @@ The 12 heaviest op signatures of each phase, by traffic.
 | 1 | 3% | `convolution` | `f16[1,256,512,512] · f16[256,256,3,3] · f16[256]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
 | 1 | 3% | `native_group_norm` | `f16[1,256,512,512] · f16[256] · f16[256]` | `1, 256, 262144, 32, 1e-06` |
 | 1 | 3% | `silu` | `f16[1,256,512,512]` |  |
+
+#### sd3.5-large (bfloat16, 1024x1024, CFG batch 2 (4096 image + 333 text tokens)) — 2 of 38 layers
+
+**forward** — 177 op calls, 8,836 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 4 | 7% | `pow.Tensor_Scalar` | `f32[2,38,4096,64]{perm}` | `2` |
+| 2 | 7% | `gelu` | `bf16[2,4096,9728]` |  |
+| 6 | 6% | `linear` | `bf16[2,4096,2432] · bf16[2432,2432] · bf16[2432]` |  |
+| 6 | 6% | `cat` | `bf16[2,38,4096,64]{perm} · bf16[2,38,333,64]{perm}` | `2` |
+| 2 | 5% | `linear` | `bf16[2,4096,2432] · bf16[9728,2432] · bf16[9728]` |  |
+| 2 | 5% | `linear` | `bf16[2,4096,9728] · bf16[2432,9728] · bf16[2432]` |  |
+| 4 | 5% | `mul.Tensor` | `bf16[2,38,4096,64]{perm} · f32[2,38,4096,1]` |  |
+| 4 | 5% | `_to_copy` | `bf16[2,38,4096,64]{perm}` | `dtype=f32` |
+| 4 | 5% | `_to_copy` | `f32[2,38,4096,64]{perm}` | `dtype=bf16` |
+| 4 | 5% | `add.Tensor` | `bf16[2,4096,2432]{T} · bf16[2,4096,2432]` |  |
+| 5 | 4% | `native_layer_norm` | `bf16[2,4096,2432]{T}` | `[2432], 1e-06` |
+| 5 | 4% | `mul.Tensor` | `bf16[2,4096,2432] · bf16[2,1,2432]` |  |
+
+#### sdxl-unet (float16, 1024x1024, CFG batch 2 (latent 2x4x128x128))
+
+**forward** — 1,984 op calls, 41,255 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 60 | 10% | `linear` | `f16[2,1024,1280] · f16[10240,1280] · f16[10240]` |  |
+| 60 | 9% | `mul.Tensor` | `f16[2,1024,5120]{strided} · f16[2,1024,5120]` |  |
+| 240 | 8% | `linear` | `f16[2,1024,1280] · f16[1280,1280]` |  |
+| 180 | 7% | `add.Tensor` | `f16[2,1024,1280] · f16[2,1024,1280]` |  |
+| 60 | 6% | `gelu` | `f16[2,1024,5120]{strided}` |  |
+| 60 | 5% | `linear` | `f16[2,1024,5120] · f16[1280,5120] · f16[1280]` |  |
+| 180 | 4% | `native_layer_norm` | `f16[2,1024,1280] · f16[1280] · f16[1280]` | `[1280], 1e-05` |
+| 126 | 4% | `linear` | `f16[2,1024,1280] · f16[1280,1280] · f16[1280]` |  |
+| 10 | 3% | `mul.Tensor` | `f16[2,4096,2560]{strided} · f16[2,4096,2560]` |  |
+| 60 | 3% | `_scaled_dot_product_attention_math_for_mps` | `f16[2,20,1024,64]{perm} · f16[2,20,1024,64]{perm} · f16[2,20,1024,64]{perm}` |  |
+| 120 | 3% | `clone` | `f16[2,1024,20,64]{perm}` | `memory_format=contiguous_format` |
+| 120 | 3% | `div.Tensor` | `f16[2,1024,1280]` | `1.0` |
+
+#### sdxl-vae-decode (bfloat16, latent 1x4x128x128)
+
+**forward** — 133 op calls, 32,197 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 6 | 10% | `native_group_norm` | `bf16[1,128,1024,1024] · bf16[128] · bf16[128]` | `1, 128, 1048576, 32, 1e-06` |
+| 6 | 10% | `silu` | `bf16[1,128,1024,1024]` |  |
+| 5 | 8% | `convolution` | `bf16[1,128,1024,1024] · bf16[128,128,3,3] · bf16[128]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 3 | 7% | `add.Tensor` | `bf16[1,128,1024,1024] · bf16[1,128,1024,1024]` |  |
+| 3 | 5% | `div.Tensor` | `bf16[1,128,1024,1024]` | `1.0` |
+| 5 | 4% | `convolution` | `bf16[1,256,512,512] · bf16[256,256,3,3] · bf16[256]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 5 | 4% | `native_group_norm` | `bf16[1,256,512,512] · bf16[256] · bf16[256]` | `1, 256, 262144, 32, 1e-06` |
+| 5 | 4% | `silu` | `bf16[1,256,512,512]` |  |
+| 3 | 4% | `add.Tensor` | `bf16[1,256,512,512] · bf16[1,256,512,512]` |  |
+| 1 | 3% | `convolution` | `bf16[1,256,1024,1024] · bf16[256,256,3,3] · bf16[256]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 1 | 3% | `native_group_norm` | `bf16[1,256,1024,1024] · bf16[256] · bf16[256]` | `1, 256, 1048576, 32, 1e-06` |
+| 1 | 3% | `silu` | `bf16[1,256,1024,1024]` |  |
+
+### Video diffusion
+
+#### ltx-video (bfloat16, 33 frames at 512x768 (1920 video + 128 text tokens)) — 2 of 28 layers
+
+**forward** — 175 op calls, 2,939 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 8 | 12% | `mul.Tensor` | `f32[1,1920,2048] · f32[1,1920,2048]` |  |
+| 12 | 9% | `linear` | `bf16[1,1920,2048] · bf16[2048,2048] · bf16[2048]` |  |
+| 12 | 9% | `_to_copy` | `bf16[1,1920,2048]` | `dtype=f32` |
+| 8 | 6% | `_to_copy` | `f32[1,1920,2048]` | `dtype=bf16` |
+| 4 | 6% | `add.Tensor` | `f32[1,1920,2048] · f32[1,1920,2048]` |  |
+| 2 | 5% | `linear` | `bf16[1,1920,2048] · bf16[8192,2048] · bf16[8192]` |  |
+| 2 | 5% | `linear` | `bf16[1,1920,8192] · bf16[2048,8192] · bf16[2048]` |  |
+| 9 | 5% | `mul.Tensor` | `bf16[1,1920,2048] · bf16[1,1,2048]` |  |
+| 6 | 5% | `add.Tensor` | `bf16[1,1920,2048] · bf16[1,1920,2048]` |  |
+| 4 | 4% | `pow.Tensor_Scalar` | `f32[1,1920,2048]` | `2` |
+| 2 | 4% | `gelu` | `bf16[1,1920,8192]` |  |
+| 4 | 3% | `mul.Tensor` | `bf16[1,1920,2048] · f32[1,1920,1]` |  |
+
+#### ltx-video-vae-decode (bfloat16, latent 1x128x5x16x24)
+
+**forward** — 517 op calls, 54,108 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 9 | 13% | `pow.Tensor_Scalar` | `f32[1,33,128,192,128]{T}` | `2` |
+| 9 | 10% | `_to_copy` | `f32[1,33,128,192,128]{T}` | `dtype=bf16` |
+| 8 | 9% | `mul.Tensor` | `bf16[1,33,128,192,128]{T} · f32[1,33,128,192,1]` |  |
+| 8 | 9% | `_to_copy` | `bf16[1,33,128,192,128]{T}` | `dtype=f32` |
+| 9 | 7% | `cat` | `bf16[1,128,1,128,192] · bf16[1,128,33,128,192] · bf16[1,128,1,128,192]` | `2` |
+| 9 | 7% | `mean.dim` | `f32[1,33,128,192,128]{T}` | `[-1], True` |
+| 9 | 7% | `silu` | `bf16[1,128,33,128,192]` |  |
+| 8 | 6% | `convolution` | `bf16[1,128,35,128,192] · bf16[128,128,3,3,3] · bf16[128]` | `[1,1,1], [0,1,1], [1,1,1], False, [0,0,0], 1` |
+| 3 | 3% | `add.Tensor` | `bf16[1,128,33,128,192] · bf16[1,128,33,128,192]` |  |
+| 7 | 3% | `pow.Tensor_Scalar` | `f32[1,17,64,96,256]{T}` | `2` |
+| 7 | 2% | `_to_copy` | `f32[1,17,64,96,256]{T}` | `dtype=bf16` |
+| 6 | 2% | `mul.Tensor` | `bf16[1,17,64,96,256]{T} · f32[1,17,64,96,1]` |  |
+
+#### wan-vae-decode (bfloat16, latent 1x16x3x40x60)
+
+**forward** — 1,284 op calls, 98,995 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 12 | 8% | `div.Tensor` | `f32[1,96,4,320,480] · f32[1,96,4,320,480]{bcast}` |  |
+| 12 | 4% | `_to_copy` | `bf16[1,96,4,320,480]` | `dtype=f32` |
+| 12 | 4% | `_to_copy` | `f32[1,96,4,320,480]` | `dtype=bf16` |
+| 12 | 3% | `convolution` | `bf16[1,96,6,322,482] · bf16[96,96,3,3,3] · bf16[96]` | `[1,1,1], [0,0,0], [1,1,1], False, [0,0,0], 1` |
+| 10 | 3% | `div.Tensor` | `f32[1,192,4,160,240] · f32[1,192,4,160,240]{bcast}` |  |
+| 12 | 3% | `norm.ScalarOpt_dim` | `f32[1,96,4,320,480]` | `2.0, [1], True` |
+| 12 | 3% | `mul.Tensor` | `bf16[1,96,4,320,480] · bf16[96,1,1,1]` |  |
+| 12 | 3% | `mul.Tensor` | `bf16[1,96,4,320,480]` | `9.797958971132712` |
+| 12 | 3% | `add.Tensor` | `bf16[1,96,4,320,480]` | `0.0` |
+| 12 | 3% | `silu` | `bf16[1,96,4,320,480]` |  |
+| 7 | 2% | `constant_pad_nd` | `bf16[1,96,6,320,480]` | `[1,1,1,1,0,0], 0.0` |
+| 7 | 2% | `constant_pad_nd` | `bf16[1,96,5,320,480]` | `[1,1,1,1,1,0], 0.0` |
+
+#### wan2.1-1.3b (bfloat16, 33 frames at 320x480 (5400 video + 512 text tokens)) — 2 of 30 layers
+
+**forward** — 160 op calls, 5,544 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 11 | 9% | `_to_copy` | `bf16[1,5400,1536]{T}` | `dtype=f32` |
+| 12 | 8% | `linear` | `bf16[1,5400,1536] · bf16[1536,1536] · bf16[1536]` |  |
+| 6 | 7% | `mul.Tensor` | `f32[1,5400,1536] · f32[1,1,1536]` |  |
+| 4 | 7% | `add.Tensor` | `f32[1,5400,1536]{T} · f32[1,5400,1536]` |  |
+| 2 | 7% | `gelu` | `bf16[1,5400,8960]` |  |
+| 7 | 6% | `_to_copy` | `f32[1,5400,1536]` | `dtype=bf16` |
+| 5 | 6% | `native_layer_norm` | `f32[1,5400,1536]{T}` | `[1536], 1e-06` |
+| 2 | 5% | `linear` | `bf16[1,5400,1536] · bf16[8960,1536] · bf16[8960]` |  |
+| 2 | 5% | `linear` | `bf16[1,5400,8960] · bf16[1536,8960] · bf16[1536]` |  |
+| 16 | 5% | `mul.Tensor` | `bf16[1,5400,12,64]{strided} · bf16[1,5400,1,64]{strided}` |  |
+| 4 | 5% | `add.Tensor` | `f32[1,5400,1536] · f32[1,1,1536]` |  |
+| 6 | 3% | `_fused_rms_norm` | `bf16[1,5400,1536] · bf16[1536]` | `[1536], 1e-06` |
+
+### ControlNet preprocessors
+
+#### depth-anything (float32, 3x518x518) — ComfyUI ControlNet preprocessor class
+
+**forward** — 255 op calls, 1,796 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 48 | 12% | `linear` | `f32[1,1370,384] · f32[384,384] · f32[384]` |  |
+| 12 | 11% | `gelu` | `f32[1,1370,1536]` |  |
+| 25 | 8% | `add.Tensor` | `f32[1,1370,384] · f32[1,1370,384]` |  |
+| 12 | 8% | `linear` | `f32[1,1370,384] · f32[1536,384] · f32[1536]` |  |
+| 12 | 8% | `linear` | `f32[1,1370,1536] · f32[384,1536] · f32[384]` |  |
+| 28 | 6% | `native_layer_norm` | `f32[1,1370,384] · f32[384] · f32[384]` | `[384], 1e-06` |
+| 24 | 5% | `mul.Tensor` | `f32[1,1370,384] · f32[384]` |  |
+| 12 | 5% | `_scaled_dot_product_attention_math_for_mps` | `f32[1,6,1370,64]{perm} · f32[1,6,1370,64]{perm} · f32[1,6,1370,64]{perm}` | `scale=0.125` |
+| 1 | 4% | `convolution` | `f32[1,32,518,518] · f32[32,32,3,3] · f32[32]` | `[1,1], [1,1], [1,1], False, [0,0], 1` |
+| 1 | 4% | `relu` | `f32[1,32,518,518]` |  |
+| 12 | 3% | `clone` | `f32[1,1370,6,64]{perm}` | `memory_format=contiguous_format` |
+| 3 | 3% | `add.Tensor` | `f32[1,64,148,148] · f32[1,64,148,148]` |  |
+
+#### segformer-ade (float32, 3x512x512) — ComfyUI ControlNet preprocessor class
+
+**forward** — 151 op calls, 805 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 1 | 16% | `cat` | `f32[1,256,128,128] · f32[1,256,128,128] · f32[1,256,128,128] · f32[1,256,128,128]` | `1` |
+| 1 | 10% | `convolution` | `f32[1,1024,128,128] · f32[256,1024,1,1]` | `[1,1], [0,0], [1,1], False, [0,0], 1` |
+| 2 | 4% | `convolution` | `f32[1,128,128,128]{cl} · f32[128,1,3,3] · f32[128]` | `[1,1], [1,1], [1,1], False, [0,0], 128` |
+| 1 | 4% | `native_batch_norm` | `f32[1,256,128,128] · f32[256] · f32[256] · f32[256] · …(+1)` | `False, 0.1, 1e-05` |
+| 2 | 4% | `gelu` | `f32[1,16384,128]{T}` |  |
+| 1 | 4% | `upsample_bilinear2d` | `f32[1,256,128,128]{cl}` | `[128,128], False` |
+| 1 | 4% | `relu` | `f32[1,256,128,128]` |  |
+| 1 | 3% | `convolution` | `f32[1,256,128,128] · f32[150,256,1,1] · f32[150]` | `[1,1], [0,0], [1,1], False, [0,0], 1` |
+| 4 | 3% | `add.Tensor` | `f32[1,16384,32] · f32[1,16384,32]` |  |
+| 5 | 3% | `native_layer_norm` | `f32[1,16384,32] · f32[32] · f32[32]` | `[32], 1e-05` |
+| 2 | 2% | `linear` | `f32[1,16384,32] · f32[128,32] · f32[128]` |  |
+| 2 | 2% | `linear` | `f32[1,16384,128]{T} · f32[32,128] · f32[32]` |  |
+
+#### zoedepth (float32, 3x384x512) — ComfyUI ControlNet preprocessor class
+
+**forward** — 818 op calls, 13,046 MiB traffic
+
+| calls | share | op | inputs | args |
+|---:|---:|---|---|---|
+| 24 | 14% | `index.Tensor` | `f32[2964,16] · i64[591361]` |  |
+| 24 | 13% | `clone` | `f32[16,769,769]{perm}` | `memory_format=contiguous_format` |
+| 24 | 9% | `_scaled_dot_product_attention_math_for_mps` | `f32[1,16,769,64]{perm} · f32[1,16,769,64]{perm} · f32[1,16,769,64]{perm} · f32[1,16,769,769]` | `scale=0.125` |
+| 24 | 6% | `linear` | `f32[1,769,1024] · f32[4096,1024] · f32[4096]` |  |
+| 24 | 6% | `linear` | `f32[1,769,4096] · f32[1024,4096] · f32[1024]` |  |
+| 72 | 6% | `linear` | `f32[1,769,1024] · f32[1024,1024] · f32[1024]` |  |
+| 24 | 4% | `gelu` | `f32[1,769,4096]` |  |
+| 48 | 3% | `add.Tensor` | `f32[1,769,1024] · f32[1,769,1024]` |  |
+| 48 | 2% | `native_layer_norm` | `f32[1,769,1024] · f32[1024] · f32[1024]` | `[1024], 1e-12` |
+| 48 | 2% | `mul.Tensor` | `f32[1024] · f32[1,769,1024]` |  |
+| 1 | 2% | `cat` | `f32[1,33,384,512] · f32[1,128,384,512]` | `1` |
+| 24 | 2% | `linear` | `f32[1,769,1024] · f32[1024,1024]` |  |
 
