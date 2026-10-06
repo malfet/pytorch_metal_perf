@@ -156,6 +156,8 @@ tools/
   sweep.py       multi-version orchestration, interleaved
   analyze.py     JSONL -> trends + regressions (stdlib only)
   report.py      JSON -> self-contained HTML
+  trace_models.py  run real networks, log every aten op -> reports/workloads/*.json
+  workloads_md.py  reports/workloads/*.json -> WORKLOADS.md (stdlib only)
 regressions/     one file per historical regression, PRs verified against tags
 results/<machine+os>/<torch-version>/<timestamp>-p<pass>.jsonl
 ```
@@ -181,6 +183,12 @@ sort/topk, distributions, conv. Three entries in `regressions/`
 (`im2col-64bit-index`, `d2h-nondense-gather`, `inductor-layout-channels-last`)
 name cells in groups that do not exist yet and are therefore not detectable
 today.
+
+[WORKLOADS.md](WORKLOADS.md) lists the ops, shapes, dtypes and layouts that
+popular LLMs, encoders, vision, audio and diffusion models actually execute,
+and which of them the suite measures. Regenerate it with
+`python tools/trace_models.py && python tools/workloads_md.py`, in an env with
+torch, transformers, torchvision and diffusers.
 
 v1 is **eager-only**. The `torch.compile` / MPSInductor lane is not implemented,
 so pattern F — of which #192551 is a 4.5–9x example — is currently out of reach.

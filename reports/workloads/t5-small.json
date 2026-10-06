@@ -1,0 +1,1298 @@
+{
+ "model": "t5-small",
+ "family": "encoder",
+ "dtype": "float32",
+ "input": "batch 1, 512 tokens",
+ "torch": "2.15.0a0+git119b177",
+ "phases": {
+  "forward": {
+   "calls": 501,
+   "wall_s": 0.02480316598666832,
+   "ops": [
+    {
+     "op": "add_.Tensor",
+     "inputs": [
+      "f32[1,8,512,512]",
+      "f32[1,8,512,512]{cl}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,8,512,512]"
+     ],
+     "count": 6,
+     "bytes": 150994944,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,512,512]",
+      "f32[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 36,
+     "bytes": 113246208,
+     "tag": null
+    },
+    {
+     "op": "_softmax",
+     "inputs": [
+      "f32[1,8,512,512]"
+     ],
+     "args": [
+      "-1",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,8,512,512]"
+     ],
+     "count": 6,
+     "bytes": 100663296,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,32,512]",
+      "f32[32128,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,32128]"
+     ],
+     "count": 1,
+     "bytes": 69976064,
+     "tag": null
+    },
+    {
+     "op": "bmm",
+     "inputs": [
+      "f32[8,512,64]{perm}",
+      "f32[8,64,512]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,512,512]"
+     ],
+     "count": 6,
+     "bytes": 62914560,
+     "tag": null
+    },
+    {
+     "op": "bmm",
+     "inputs": [
+      "f32[8,512,512]",
+      "f32[8,512,64]{perm}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,512,64]"
+     ],
+     "count": 6,
+     "bytes": 62914560,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,512,512]",
+      "f32[2048,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,2048]"
+     ],
+     "count": 6,
+     "bytes": 56623104,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,512,2048]",
+      "f32[512,2048]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 6,
+     "bytes": 56623104,
+     "tag": null
+    },
+    {
+     "op": "relu",
+     "inputs": [
+      "f32[1,512,2048]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,2048]"
+     ],
+     "count": 6,
+     "bytes": 50331648,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,32,512]",
+      "f32[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 36,
+     "bytes": 42467328,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,512,512]",
+      "f32[1,512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 12,
+     "bytes": 37748736,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[1,512,512]",
+      "f32[1,512,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 13,
+     "bytes": 27289600,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[512]",
+      "f32[1,512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 13,
+     "bytes": 27289600,
+     "tag": "pointwise"
+    },
+    {
+     "op": "pow.Tensor_Scalar",
+     "inputs": [
+      "f32[1,512,512]"
+     ],
+     "args": [
+      "2"
+     ],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 13,
+     "bytes": 27262976,
+     "tag": "pointwise"
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,32,512]",
+      "f32[2048,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,2048]"
+     ],
+     "count": 6,
+     "bytes": 27131904,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[1,32,2048]",
+      "f32[512,2048]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 6,
+     "bytes": 27131904,
+     "tag": null
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "f32[0]",
+      "f32[1,8,512,64]{perm}"
+     ],
+     "args": [
+      "-2"
+     ],
+     "outputs": [
+      "f32[1,8,512,64]"
+     ],
+     "count": 12,
+     "bytes": 25165824,
+     "tag": null
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[32,8]",
+      "i64[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[512,512,8]"
+     ],
+     "count": 1,
+     "bytes": 18874368,
+     "tag": null
+    },
+    {
+     "op": "mean.dim",
+     "inputs": [
+      "f32[1,512,512]"
+     ],
+     "args": [
+      "[-1]",
+      "True"
+     ],
+     "outputs": [
+      "f32[1,512,1]"
+     ],
+     "count": 13,
+     "bytes": 13658112,
+     "tag": "reduction"
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,512,8,64]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,512,8,64]"
+     ],
+     "count": 6,
+     "bytes": 12582912,
+     "tag": "pointwise"
+    },
+    {
+     "op": "bmm",
+     "inputs": [
+      "f32[8,32,64]{perm}",
+      "f32[8,64,512]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,32,512]"
+     ],
+     "count": 6,
+     "bytes": 9830400,
+     "tag": null
+    },
+    {
+     "op": "bmm",
+     "inputs": [
+      "f32[8,32,512]",
+      "f32[8,512,64]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,32,64]"
+     ],
+     "count": 6,
+     "bytes": 9830400,
+     "tag": null
+    },
+    {
+     "op": "add_.Tensor",
+     "inputs": [
+      "f32[1,8,32,512]",
+      "f32[1,8,32,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,8,32,512]"
+     ],
+     "count": 6,
+     "bytes": 9437184,
+     "tag": "pointwise"
+    },
+    {
+     "op": "where.self",
+     "inputs": [
+      "bool[512,512]",
+      "i64[512,512]",
+      "i64[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 6553600,
+     "tag": "pointwise"
+    },
+    {
+     "op": "minimum",
+     "inputs": [
+      "i64[512,512]",
+      "i64[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 6291456,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add_.Tensor",
+     "inputs": [
+      "i64[512,512]",
+      "i64[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 6291456,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_softmax",
+     "inputs": [
+      "f32[1,8,32,512]"
+     ],
+     "args": [
+      "-1",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,8,32,512]"
+     ],
+     "count": 6,
+     "bytes": 6291456,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "16"
+     ],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "abs",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "8"
+     ],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 4194304,
+     "tag": "pointwise"
+    },
+    {
+     "op": "full_like",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "15"
+     ],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 4194304,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,32,512]",
+      "f32[1,32,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 18,
+     "bytes": 3538944,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[512,512]"
+     ],
+     "count": 1,
+     "bytes": 3145728,
+     "tag": null
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "f32[512,512]"
+     ],
+     "args": [
+      "dtype=i64"
+     ],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 3145728,
+     "tag": null
+    },
+    {
+     "op": "relu",
+     "inputs": [
+      "f32[1,32,2048]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,2048]"
+     ],
+     "count": 6,
+     "bytes": 3145728,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[512]",
+      "f32[1,32,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 19,
+     "bytes": 2529280,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[1,32,512]",
+      "f32[1,32,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 19,
+     "bytes": 2492800,
+     "tag": "pointwise"
+    },
+    {
+     "op": "pow.Tensor_Scalar",
+     "inputs": [
+      "f32[1,32,512]"
+     ],
+     "args": [
+      "2"
+     ],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 19,
+     "bytes": 2490368,
+     "tag": "pointwise"
+    },
+    {
+     "op": "gt.Scalar",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "bool[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2359296,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "bool[512,512]"
+     ],
+     "args": [
+      "dtype=i64"
+     ],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2359296,
+     "tag": null
+    },
+    {
+     "op": "lt.Scalar",
+     "inputs": [
+      "i64[512,512]"
+     ],
+     "args": [
+      "8"
+     ],
+     "outputs": [
+      "bool[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2359296,
+     "tag": "pointwise"
+    },
+    {
+     "op": "sub.Tensor",
+     "inputs": [
+      "i64[1,512]",
+      "i64[512,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2105344,
+     "tag": "pointwise"
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[32128,512]",
+      "i64[1,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,512]"
+     ],
+     "count": 1,
+     "bytes": 2101248,
+     "tag": null
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[512,512]"
+     ],
+     "args": [
+      "8"
+     ],
+     "outputs": [
+      "f32[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2097152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "log",
+     "inputs": [
+      "f32[512,512]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2097152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[512,512]"
+     ],
+     "args": [
+      "2.772588722239781"
+     ],
+     "outputs": [
+      "f32[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2097152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[512,512]"
+     ],
+     "args": [
+      "8"
+     ],
+     "outputs": [
+      "f32[512,512]"
+     ],
+     "count": 1,
+     "bytes": 2097152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "cat",
+     "inputs": [
+      "f32[0]",
+      "f32[1,8,32,64]{perm}"
+     ],
+     "args": [
+      "-2"
+     ],
+     "outputs": [
+      "f32[1,8,32,64]"
+     ],
+     "count": 12,
+     "bytes": 1572864,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[1,32,8,64]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[1,32,8,64]"
+     ],
+     "count": 12,
+     "bytes": 1572864,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mean.dim",
+     "inputs": [
+      "f32[1,32,512]"
+     ],
+     "args": [
+      "[-1]",
+      "True"
+     ],
+     "outputs": [
+      "f32[1,32,1]"
+     ],
+     "count": 19,
+     "bytes": 1247616,
+     "tag": "reduction"
+    },
+    {
+     "op": "bmm",
+     "inputs": [
+      "f32[8,32,64]{perm}",
+      "f32[8,64,32]{T}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,32,32]"
+     ],
+     "count": 6,
+     "bytes": 983040,
+     "tag": null
+    },
+    {
+     "op": "bmm",
+     "inputs": [
+      "f32[8,32,32]",
+      "f32[8,32,64]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,32,64]"
+     ],
+     "count": 6,
+     "bytes": 983040,
+     "tag": null
+    },
+    {
+     "op": "add_.Tensor",
+     "inputs": [
+      "f32[1,8,32,32]",
+      "f32[1,8,32,32]{cl}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,8,32,32]"
+     ],
+     "count": 6,
+     "bytes": 589824,
+     "tag": "pointwise"
+    },
+    {
+     "op": "zeros",
+     "inputs": [],
+     "args": [
+      "[1,8,32,512]",
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[1,8,32,512]"
+     ],
+     "count": 1,
+     "bytes": 524288,
+     "tag": null
+    },
+    {
+     "op": "_softmax",
+     "inputs": [
+      "f32[1,8,32,32]"
+     ],
+     "args": [
+      "-1",
+      "False"
+     ],
+     "outputs": [
+      "f32[1,8,32,32]"
+     ],
+     "count": 6,
+     "bytes": 393216,
+     "tag": null
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[32128,512]",
+      "i64[1,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 1,
+     "bytes": 131328,
+     "tag": null
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[1,32,512]"
+     ],
+     "args": [
+      "0.04419417382415922"
+     ],
+     "outputs": [
+      "f32[1,32,512]"
+     ],
+     "count": 1,
+     "bytes": 131072,
+     "tag": "pointwise"
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[32,8]",
+      "i64[32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[32,32,8]"
+     ],
+     "count": 1,
+     "bytes": 73728,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,8,32,32]{cl}",
+      "f32[1,1,32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,8,32,32]{cl}"
+     ],
+     "count": 1,
+     "bytes": 69632,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,512,1]"
+     ],
+     "args": [
+      "1e-06"
+     ],
+     "outputs": [
+      "f32[1,512,1]"
+     ],
+     "count": 13,
+     "bytes": 53248,
+     "tag": "pointwise"
+    },
+    {
+     "op": "rsqrt",
+     "inputs": [
+      "f32[1,512,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,512,1]"
+     ],
+     "count": 13,
+     "bytes": 53248,
+     "tag": "pointwise"
+    },
+    {
+     "op": "minimum",
+     "inputs": [
+      "i64[32,32]",
+      "i64[32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 2,
+     "bytes": 49152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "where.self",
+     "inputs": [
+      "bool[32,32]",
+      "i64[32,32]",
+      "i64[32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 25600,
+     "tag": "pointwise"
+    },
+    {
+     "op": "zeros_like",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 16384,
+     "tag": null
+    },
+    {
+     "op": "neg",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 16384,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [
+      "16"
+     ],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 16384,
+     "tag": "pointwise"
+    },
+    {
+     "op": "full_like",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [
+      "31"
+     ],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 16384,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 16384,
+     "tag": "pointwise"
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[32,32]"
+     ],
+     "count": 1,
+     "bytes": 12288,
+     "tag": null
+    },
+    {
+     "op": "_to_copy",
+     "inputs": [
+      "f32[32,32]"
+     ],
+     "args": [
+      "dtype=i64"
+     ],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 12288,
+     "tag": null
+    },
+    {
+     "op": "lt.Scalar",
+     "inputs": [
+      "i64[32,32]"
+     ],
+     "args": [
+      "16"
+     ],
+     "outputs": [
+      "bool[32,32]"
+     ],
+     "count": 1,
+     "bytes": 9216,
+     "tag": "pointwise"
+    },
+    {
+     "op": "sub.Tensor",
+     "inputs": [
+      "i64[1,32]",
+      "i64[32,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "i64[32,32]"
+     ],
+     "count": 1,
+     "bytes": 8704,
+     "tag": "pointwise"
+    },
+    {
+     "op": "arange",
+     "inputs": [],
+     "args": [
+      "512",
+      "dtype=i64"
+     ],
+     "outputs": [
+      "i64[512]"
+     ],
+     "count": 2,
+     "bytes": 8192,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[512,1]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "i64[512,1]"
+     ],
+     "count": 1,
+     "bytes": 8192,
+     "tag": "pointwise"
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[32,32]"
+     ],
+     "args": [
+      "16"
+     ],
+     "outputs": [
+      "f32[32,32]"
+     ],
+     "count": 1,
+     "bytes": 8192,
+     "tag": "pointwise"
+    },
+    {
+     "op": "log",
+     "inputs": [
+      "f32[32,32]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[32,32]"
+     ],
+     "count": 1,
+     "bytes": 8192,
+     "tag": "pointwise"
+    },
+    {
+     "op": "div.Tensor",
+     "inputs": [
+      "f32[32,32]"
+     ],
+     "args": [
+      "2.0794415416798357"
+     ],
+     "outputs": [
+      "f32[32,32]"
+     ],
+     "count": 1,
+     "bytes": 8192,
+     "tag": "pointwise"
+    },
+    {
+     "op": "mul.Tensor",
+     "inputs": [
+      "f32[32,32]"
+     ],
+     "args": [
+      "16"
+     ],
+     "outputs": [
+      "f32[32,32]"
+     ],
+     "count": 1,
+     "bytes": 8192,
+     "tag": "pointwise"
+    },
+    {
+     "op": "where.self",
+     "inputs": [
+      "bool[1,1,32,32]",
+      "f32[]",
+      "f32[]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,1,32,32]"
+     ],
+     "count": 1,
+     "bytes": 5128,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[1,32,1]"
+     ],
+     "args": [
+      "1e-06"
+     ],
+     "outputs": [
+      "f32[1,32,1]"
+     ],
+     "count": 19,
+     "bytes": 4864,
+     "tag": "pointwise"
+    },
+    {
+     "op": "rsqrt",
+     "inputs": [
+      "f32[1,32,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,32,1]"
+     ],
+     "count": 19,
+     "bytes": 4864,
+     "tag": "pointwise"
+    },
+    {
+     "op": "le.Tensor",
+     "inputs": [
+      "i64[1,1,1,32]",
+      "i64[1,1,32,1]"
+     ],
+     "args": [],
+     "outputs": [
+      "bool[1,1,32,32]"
+     ],
+     "count": 1,
+     "bytes": 1536,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[32]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "i64[32]"
+     ],
+     "count": 2,
+     "bytes": 1024,
+     "tag": "pointwise"
+    },
+    {
+     "op": "arange",
+     "inputs": [],
+     "args": [
+      "32"
+     ],
+     "outputs": [
+      "i64[32]"
+     ],
+     "count": 2,
+     "bytes": 512,
+     "tag": null
+    },
+    {
+     "op": "arange",
+     "inputs": [],
+     "args": [
+      "32",
+      "dtype=i64"
+     ],
+     "outputs": [
+      "i64[32]"
+     ],
+     "count": 2,
+     "bytes": 512,
+     "tag": null
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "i64[32,1]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "i64[32,1]"
+     ],
+     "count": 1,
+     "bytes": 512,
+     "tag": "pointwise"
+    },
+    {
+     "op": "arange",
+     "inputs": [],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "i64[1]"
+     ],
+     "count": 2,
+     "bytes": 16,
+     "tag": null
+    },
+    {
+     "op": "scalar_tensor",
+     "inputs": [],
+     "args": [
+      "-3.4028234663852886e+38",
+      "dtype=f32"
+     ],
+     "outputs": [
+      "f32[]"
+     ],
+     "count": 1,
+     "bytes": 4,
+     "tag": null
+    }
+   ]
+  }
+ }
+}

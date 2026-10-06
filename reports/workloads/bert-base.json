@@ -1,0 +1,241 @@
+{
+ "model": "bert-base",
+ "family": "encoder",
+ "dtype": "float32",
+ "input": "batch 8, 128 tokens",
+ "torch": "2.15.0a0+git119b177",
+ "phases": {
+  "forward": {
+   "calls": 165,
+   "wall_s": 0.040581292007118464,
+   "ops": [
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[8,128,768]",
+      "f32[768,768]",
+      "f32[768]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,768]"
+     ],
+     "count": 48,
+     "bytes": 415383552,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[8,128,768]",
+      "f32[3072,768]",
+      "f32[3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,3072]"
+     ],
+     "count": 12,
+     "bytes": 302137344,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[8,128,3072]",
+      "f32[768,3072]",
+      "f32[768]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,768]"
+     ],
+     "count": 12,
+     "bytes": 302026752,
+     "tag": null
+    },
+    {
+     "op": "gelu",
+     "inputs": [
+      "f32[8,128,3072]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,3072]"
+     ],
+     "count": 12,
+     "bytes": 301989888,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[8,128,768]",
+      "f32[8,128,768]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,768]"
+     ],
+     "count": 25,
+     "bytes": 235929600,
+     "tag": "pointwise"
+    },
+    {
+     "op": "native_layer_norm",
+     "inputs": [
+      "f32[8,128,768]",
+      "f32[768]",
+      "f32[768]"
+     ],
+     "args": [
+      "[768]",
+      "1e-12"
+     ],
+     "outputs": [
+      "f32[8,128,768]",
+      "f32[8,128,1]",
+      "f32[8,128,1]"
+     ],
+     "count": 25,
+     "bytes": 157644800,
+     "tag": null
+    },
+    {
+     "op": "_scaled_dot_product_attention_math_for_mps",
+     "inputs": [
+      "f32[8,12,128,64]{perm}",
+      "f32[8,12,128,64]{perm}",
+      "f32[8,12,128,64]{perm}"
+     ],
+     "args": [
+      "scale=0.125"
+     ],
+     "outputs": [
+      "f32[8,12,128,64]"
+     ],
+     "count": 12,
+     "bytes": 150994944,
+     "tag": null
+    },
+    {
+     "op": "clone",
+     "inputs": [
+      "f32[8,128,12,64]{perm}"
+     ],
+     "args": [
+      "memory_format=contiguous_format"
+     ],
+     "outputs": [
+      "f32[8,128,12,64]"
+     ],
+     "count": 12,
+     "bytes": 75497472,
+     "tag": "pointwise"
+    },
+    {
+     "op": "add.Tensor",
+     "inputs": [
+      "f32[8,128,768]",
+      "f32[1,128,768]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,768]"
+     ],
+     "count": 1,
+     "bytes": 6684672,
+     "tag": "pointwise"
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[30522,768]",
+      "i64[8,128]"
+     ],
+     "args": [
+      "0"
+     ],
+     "outputs": [
+      "f32[8,128,768]"
+     ],
+     "count": 1,
+     "bytes": 6299648,
+     "tag": null
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[2,768]",
+      "i64[8,128]{bcast}"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,128,768]"
+     ],
+     "count": 1,
+     "bytes": 6299648,
+     "tag": null
+    },
+    {
+     "op": "linear",
+     "inputs": [
+      "f32[8,768]{strided}",
+      "f32[768,768]",
+      "f32[768]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,768]"
+     ],
+     "count": 1,
+     "bytes": 2411520,
+     "tag": null
+    },
+    {
+     "op": "embedding",
+     "inputs": [
+      "f32[512,768]",
+      "i64[1,128]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[1,128,768]"
+     ],
+     "count": 1,
+     "bytes": 787456,
+     "tag": null
+    },
+    {
+     "op": "tanh",
+     "inputs": [
+      "f32[8,768]"
+     ],
+     "args": [],
+     "outputs": [
+      "f32[8,768]"
+     ],
+     "count": 1,
+     "bytes": 49152,
+     "tag": "pointwise"
+    },
+    {
+     "op": "gather",
+     "inputs": [
+      "i64[1,512]",
+      "i64[1,128]"
+     ],
+     "args": [
+      "1"
+     ],
+     "outputs": [
+      "i64[1,128]"
+     ],
+     "count": 1,
+     "bytes": 3072,
+     "tag": null
+    }
+   ]
+  }
+ }
+}
